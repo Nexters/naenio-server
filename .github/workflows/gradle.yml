@@ -36,6 +36,10 @@ jobs:
       run: mkdir deploy
     - name: Copy Jar
       run: cp ./build/libs/*.jar ./deploy/
+    - name: Copy appspec
+      run: cp ./appspec.yml ./deploy/
+    - name: Copy shell
+      run: cp ./deploy.sh ./deploy/
     - name: Make zip file
       run: zip -r -qq -j ./team-versus-temp.zip ./deploy
     - name: to AWS S3
