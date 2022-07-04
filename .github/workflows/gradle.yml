@@ -46,4 +46,4 @@ jobs:
         aws s3 cp \
         --region ap-northeast-2 \
         --acl private \ 
-  ./team-versus-temp.zip s3://team-versus/
+        ./team-versus-temp.zip s3://team-versus/
