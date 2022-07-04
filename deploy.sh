@@ -6,10 +6,10 @@ cd $REPOSITORY
 JAR_NAME=$(ls $REPOSITORY/ | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/$JAR_NAME
 
-CURRENT_PID=$(pgrep -f versus)
+CURRENT_PID=$(sudo lsof -t -i:8080)
 
 if [ -z "$CURRENT_PID" ]; then
-  ehco "> no server, no kill."
+  echo "> no server, nothing to kill."
 else
   echo "> kill -9 $CURRENT_PID"
   kill -15 $CURRENT_PID
