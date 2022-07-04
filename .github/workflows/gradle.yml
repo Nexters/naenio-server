@@ -32,3 +32,18 @@ jobs:
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: clean build
+    - name: Make Directory
+      run: mkdir deploy
+    - name: Copy Jar
+      run: cp ./build/libs/*.jar ./deploy/
+    - name: Make zip file
+      run: zip -r -qq -j ./team-versus-temp.zip ./deploy
+    - name: to AWS S3
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: |
+        aws s3 cp \
+        --region ap-northeast-2 \
+        --acl private \ 
+  ./team-versus-temp.zip s3://team-versus/
