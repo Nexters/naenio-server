@@ -1,0 +1,3 @@
+[submodule "naenio-env"]
+  path = naenio-env
+  url = https://github.com/kouz95/naenio-env.git
