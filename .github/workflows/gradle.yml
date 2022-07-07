@@ -43,24 +43,24 @@ jobs:
         run: cp ./build/libs/*.jar ./deploy/
       - name: Copy appspec
         run: cp ./appspec.yml ./deploy/
-    - name: Copy shell
-      run: cp ./deploy.sh ./deploy/
-    - name: Make zip file
-      run: zip -r -qq -j ./team-versus-temp.zip ./deploy
-    - name: to AWS S3
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws s3 cp --region ap-northeast-2 --acl private ./team-versus-temp.zip s3://teamversus-deploy/
-    - name: Deploy
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: |
-        aws deploy create-deployment \
-        --application-name versus-server \
-        --deployment-group-name versus-temp \
-        --file-exists-behavior OVERWRITE \
-        --s3-location bucket=teamversus-deploy,bundleType=zip,key=team-versus-temp.zip \
-        --region ap-northeast-2
+      - name: Copy shell
+        run: cp ./deploy.sh ./deploy/
+      - name: Make zip file
+        run: zip -r -qq -j ./team-versus-temp.zip ./deploy
+      - name: to AWS S3
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 cp --region ap-northeast-2 --acl private ./team-versus-temp.zip s3://teamversus-deploy/
+      - name: Deploy
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws deploy create-deployment \
+          --application-name versus-server \
+          --deployment-group-name versus-temp \
+          --file-exists-behavior OVERWRITE \
+          --s3-location bucket=teamversus-deploy,bundleType=zip,key=team-versus-temp.zip \
+          --region ap-northeast-2
