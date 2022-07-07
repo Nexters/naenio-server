@@ -1,3 +1,5 @@
 .gradle/
 .idea/
 /src/main/resources/application-beta.yml
+index.html
+WebRouter.kt
