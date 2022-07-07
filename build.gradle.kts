@@ -15,13 +15,10 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudVersion"] = "2021.0.3"
-
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("org.springframework.cloud:spring-cloud-config-server")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -33,12 +30,6 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
-    }
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -48,4 +39,15 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+
+tasks.register<Copy>("copyEnv") {
+    from("./naenio-env")
+    include("*.yml")
+    into("src/main/resources")
+}
+
+tasks.withType<GradleBuild> {
+    dependsOn("copyEnv")
 }

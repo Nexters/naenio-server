@@ -1,1 +1,1 @@
-rootProject.name = "prior-learning"
+rootProject.name = "naenio-server"
