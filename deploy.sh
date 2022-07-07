@@ -17,4 +17,4 @@ else
 fi
 
 echo "> deploy $JAR_PATH"
-nohup java -jar $JAR_PATH > $REPOSITORY/nohup.out 2>&1 &
+nohup java -jar -Dspring.profiles.active=beta "$JAR_PATH"  > $REPOSITORY/nohup.out 2>&1 &
