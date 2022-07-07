@@ -1,0 +1,16 @@
+spring:
+  mvc:
+    log-request-details: true
+  r2dbc:
+    url: r2dbc:h2:mem:///test;DB_CLOSE_DELAY=-1;
+    username: sa
+    password:
+
+oauth:
+  redirect-uri: http://localhost:8080/login
+  kakao:
+    client-id: clientId
+
+logging:
+  level:
+    org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
