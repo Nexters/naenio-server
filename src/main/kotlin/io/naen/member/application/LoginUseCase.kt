@@ -1,4 +1,4 @@
-package io.naen.auth.application
+package io.naen.member.application
 
 import reactor.core.publisher.Mono
 

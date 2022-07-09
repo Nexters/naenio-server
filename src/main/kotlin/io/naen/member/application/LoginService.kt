@@ -1,8 +1,8 @@
-package io.naen.auth.application
+package io.naen.member.application
 
-import io.naen.auth.domain.model.MemberRepository
-import io.naen.auth.port.kakao.KakaoMemberLoadPort
-import io.naen.auth.port.kakao.KakaoTokenLoadPort
+import io.naen.member.domain.model.MemberRepository
+import io.naen.member.port.kakao.KakaoMemberLoadPort
+import io.naen.member.port.kakao.KakaoTokenLoadPort
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty

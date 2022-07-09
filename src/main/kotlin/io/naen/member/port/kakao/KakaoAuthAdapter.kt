@@ -1,4 +1,4 @@
-package io.naen.auth.port.kakao
+package io.naen.member.port.kakao
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType

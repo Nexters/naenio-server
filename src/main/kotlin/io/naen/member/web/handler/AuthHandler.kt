@@ -1,6 +1,6 @@
-package io.naen.auth.web.handler
+package io.naen.member.web.handler
 
-import io.naen.auth.application.LoginUseCase
+import io.naen.member.application.LoginUseCase
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest

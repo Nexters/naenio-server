@@ -1,4 +1,4 @@
-package io.naen.auth.domain.model
+package io.naen.member.domain.model
 
 import org.springframework.data.annotation.Id
 

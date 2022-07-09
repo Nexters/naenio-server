@@ -48,6 +48,6 @@ tasks.register<Copy>("copyEnv") {
     into("src/main/resources")
 }
 
-tasks.withType<GradleBuild> {
+tasks.withType<KotlinCompile> {
     dependsOn("copyEnv")
 }

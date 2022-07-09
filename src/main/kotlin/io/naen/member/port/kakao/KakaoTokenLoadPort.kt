@@ -1,4 +1,4 @@
-package io.naen.auth.port.kakao
+package io.naen.member.port.kakao
 
 import reactor.core.publisher.Mono
 

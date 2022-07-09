@@ -1,6 +1,6 @@
-package io.naen.auth.web.router
+package io.naen.member.web.router
 
-import io.naen.auth.web.handler.AuthHandler
+import io.naen.member.web.handler.AuthHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType

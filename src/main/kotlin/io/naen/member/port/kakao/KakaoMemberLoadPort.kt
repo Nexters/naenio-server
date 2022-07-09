@@ -1,6 +1,6 @@
-package io.naen.auth.port.kakao
+package io.naen.member.port.kakao
 
-import io.naen.auth.domain.model.Member
+import io.naen.member.domain.model.Member
 import reactor.core.publisher.Mono
 
 interface KakaoMemberLoadPort {
