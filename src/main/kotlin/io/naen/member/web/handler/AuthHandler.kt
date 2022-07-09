@@ -6,7 +6,6 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
-import java.net.URI
 
 @Component
 class AuthHandler(private val loginUseCase: LoginUseCase) {
@@ -15,7 +14,7 @@ class AuthHandler(private val loginUseCase: LoginUseCase) {
             .orElseThrow { IllegalArgumentException() })
             .map { Response.of(it) }
             .flatMap {
-                ServerResponse.permanentRedirect(URI.create("/"))
+                ServerResponse.ok()
                     .body(BodyInserters.fromValue(it))
             }
 
