@@ -21,7 +21,7 @@ private val BASE_64_URL_DECODER = Base64.getUrlDecoder()
 @Component
 class AppleMemberAdapter : ExternalMemberLoadPort {
     override fun findBy(authToken: String): Mono<ExternalMemberLoadPort.Response> {
-        val clientTokenInfo = GsonJsonParser().parseMap(String(BASE_64_DECODER.decode(authToken.split("\\.")[0])))
+        val clientTokenInfo = GsonJsonParser().parseMap(String(BASE_64_DECODER.decode(authToken.split(".")[0])))
         val clientKid = clientTokenInfo[KID] as String
         val clientAlg = clientTokenInfo[ALG] as String
 
@@ -45,8 +45,8 @@ class AppleMemberAdapter : ExternalMemberLoadPort {
                     KeyFactory.getInstance("RSA")
                         .generatePublic(
                             RSAPublicKeySpec(
-                                BigInteger(1, BASE_64_URL_DECODER.decode(it.n.substring(1, it.n.length - 1))),
-                                BigInteger(1, BASE_64_URL_DECODER.decode(it.e.substring(1, it.e.length - 1)))
+                                BigInteger(1, BASE_64_URL_DECODER.decode(it.n)),
+                                BigInteger(1, BASE_64_URL_DECODER.decode(it.e))
                             )
                         )
                 )
