@@ -1,9 +1,10 @@
 package io.naen.member.application
 
+import io.naen.member.domain.model.AuthServiceType
 import reactor.core.publisher.Mono
 
 interface LoginUseCase {
-    fun login(code: String): Mono<LoginResult>
+    fun login(authToken: String, authServiceType: AuthServiceType): Mono<LoginResult>
 
-    data class LoginResult(val id: Long, val nickname: String)
+    data class LoginResult(val token: String)
 }

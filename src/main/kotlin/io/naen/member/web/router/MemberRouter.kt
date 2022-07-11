@@ -1,6 +1,6 @@
 package io.naen.member.web.router
 
-import io.naen.member.web.handler.AuthHandler
+import io.naen.member.web.handler.MemberHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
@@ -9,11 +9,11 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 
 @Configuration
-class AuthRouter(private val authHandler: AuthHandler) {
+class MemberRouter(private val memberHandler: MemberHandler) {
     @Bean
-    fun routerFunction(): RouterFunction<ServerResponse> = router {
+    fun memberRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
-            GET("/login", authHandler::login)
+            POST("/app/login", memberHandler::login)
         }
     }
 }

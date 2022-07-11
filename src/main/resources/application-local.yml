@@ -1,15 +1,13 @@
 spring:
   mvc:
     log-request-details: true
-  r2dbc:
-    url: r2dbc:h2:mem:///test;DB_CLOSE_DELAY=-1;
-    username: sa
-    password:
+  h2:
+    console:
+      enabled: true
 
-oauth:
-  redirect-uri: http://localhost:8080/login
-  kakao:
-    client-id: clientId
+auth:
+  jwt:
+    secret: "local"
 
 logging:
   level:
