@@ -52,4 +52,4 @@ class AuthorizationFilter(
     }
 }
 
-fun ServerRequest.memberId(): Long = this.attribute(MEMBER_ID_ATTRIBUTE).get() as Long
+fun ServerRequest.memberId(): Long = this.attribute(MEMBER_ID_ATTRIBUTE).get().toString().toLong()
