@@ -1,6 +1,8 @@
 package teamversus.naenio.api.member.web.router
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -66,12 +68,37 @@ class MemberRouter(private val memberHandler: MemberHandler) {
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
-            )]
-    )
+            ),
+            RouterOperation(
+                path = "/app/members/exist",
+                method = [RequestMethod.GET],
+                beanClass = MemberHandler::class,
+                beanMethod = "exist",
+                operation = Operation(
+                    tags = ["회원"],
+                    summary = "닉네임 중복 체크",
+                    operationId = "existByNickname",
+                    parameters = [Parameter(
+                        name = "nickname",
+                        `in` = ParameterIn.QUERY,
+                        required = true
+                    )],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = MemberHandler.ExistResponse::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
+            )],
+
+        )
     fun memberRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/login", memberHandler::login)
             PUT("/app/members/nickname", memberHandler::setNickname)
+            GET("/app/members/exist", memberHandler::exist)
         }
     }
 }

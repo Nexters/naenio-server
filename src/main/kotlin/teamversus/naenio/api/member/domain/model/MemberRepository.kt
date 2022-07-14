@@ -5,4 +5,5 @@ import reactor.core.publisher.Mono
 
 interface MemberRepository : ReactiveCrudRepository<Member, Long> {
     fun findByAuthIdAndAuthServiceType(authId: String, authServiceType: AuthServiceType): Mono<Member>
+    fun existsByNickname(nickname: String): Mono<Boolean>
 }
