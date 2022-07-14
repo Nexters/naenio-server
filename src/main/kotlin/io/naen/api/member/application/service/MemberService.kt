@@ -1,21 +1,22 @@
-package io.naen.member.application.service
+package io.naen.api.member.application.service
 
-import io.naen.member.application.JwtTokenUseCase
-import io.naen.member.application.LoginUseCase
-import io.naen.member.domain.model.AuthServiceType
-import io.naen.member.domain.model.MemberRepository
-import io.naen.member.port.member.ExternalMemberLoadPort
+import io.naen.api.member.application.JwtTokenUseCase
+import io.naen.api.member.application.LoginUseCase
+import io.naen.api.member.application.MemberSetNicknameUseCase
+import io.naen.api.member.domain.model.AuthServiceType
+import io.naen.api.member.domain.model.MemberRepository
+import io.naen.api.member.port.member.ExternalMemberLoadPort
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 
 
 @Service
-class LoginService(
+class MemberService(
     private val externalMemberLoadPorts: List<ExternalMemberLoadPort>,
     private val memberRepository: MemberRepository,
     private val jwtTokenUseCase: JwtTokenUseCase,
-) : LoginUseCase {
+) : LoginUseCase, MemberSetNicknameUseCase {
     override fun login(authToken: String, authServiceType: AuthServiceType): Mono<LoginUseCase.LoginResult> =
         externalMemberLoadPort(authServiceType)
             .findBy(authToken)
@@ -28,4 +29,14 @@ class LoginService(
     private fun externalMemberLoadPort(authServiceType: AuthServiceType) =
         externalMemberLoadPorts.find { it.support(authServiceType) }
             ?: throw IllegalArgumentException("미지원 타입. AuthServiceType=${authServiceType}")
+
+    override fun set(nickname: String, memberId: Long): Mono<MemberSetNicknameUseCase.Response> {
+        return memberRepository.findById(memberId)
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 memberId=${memberId}")) }
+            .map { it.changeNickname(nickname) }
+            .flatMap {
+                memberRepository.save(it)
+            }
+            .map { MemberSetNicknameUseCase.Response(it.nickname!!) }
+    }
 }

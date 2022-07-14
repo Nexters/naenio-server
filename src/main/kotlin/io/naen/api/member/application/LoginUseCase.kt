@@ -1,6 +1,6 @@
-package io.naen.member.application
+package io.naen.api.member.application
 
-import io.naen.member.domain.model.AuthServiceType
+import io.naen.api.member.domain.model.AuthServiceType
 import reactor.core.publisher.Mono
 
 interface LoginUseCase {

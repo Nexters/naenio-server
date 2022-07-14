@@ -1,8 +1,8 @@
-package io.naen.member.port.member.adapter
+package io.naen.api.member.port.member.adapter
 
 import io.jsonwebtoken.Jwts
-import io.naen.member.domain.model.AuthServiceType
-import io.naen.member.port.member.ExternalMemberLoadPort
+import io.naen.api.member.domain.model.AuthServiceType
+import io.naen.api.member.port.member.ExternalMemberLoadPort
 import org.springframework.boot.json.GsonJsonParser
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient

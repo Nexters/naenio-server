@@ -1,7 +1,7 @@
-package io.naen.member.port.member
+package io.naen.api.member.port.member
 
-import io.naen.member.domain.model.AuthServiceType
-import io.naen.member.domain.model.Member
+import io.naen.api.member.domain.model.AuthServiceType
+import io.naen.api.member.domain.model.Member
 import reactor.core.publisher.Mono
 
 interface ExternalMemberLoadPort {

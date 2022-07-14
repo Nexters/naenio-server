@@ -1,6 +1,6 @@
 package io.naen.member.port.apple
 
-import io.naen.member.port.member.adapter.AppleMemberAdapter
+import io.naen.api.member.port.member.adapter.AppleMemberAdapter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

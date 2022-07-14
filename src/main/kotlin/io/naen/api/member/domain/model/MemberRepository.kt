@@ -1,4 +1,4 @@
-package io.naen.member.domain.model
+package io.naen.api.member.domain.model
 
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Mono

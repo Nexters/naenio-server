@@ -1,6 +1,6 @@
-package io.naen.member.web.router
+package io.naen.api.member.web.router
 
-import io.naen.member.web.handler.MemberHandler
+import io.naen.api.member.web.handler.MemberHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
@@ -14,6 +14,7 @@ class MemberRouter(private val memberHandler: MemberHandler) {
     fun memberRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/login", memberHandler::login)
+            PUT("/app/members/nickname", memberHandler::setNickname)
         }
     }
 }
