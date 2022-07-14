@@ -12,3 +12,8 @@ auth:
 logging:
   level:
     org.springframework.web.reactive.function.client.ExchangeFunctions: TRACE
+
+springdoc:
+  default-consumes-media-type: application/json
+  swagger-ui:
+    path: /swagger-ui.html

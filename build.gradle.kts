@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.spring") version "1.6.21"
 }
 
-group = "io.naen"
+group = "teamversus"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -27,11 +27,18 @@ dependencies {
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+    implementation("org.springdoc:springdoc-openapi-webflux-core:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")
+    implementation("org.springdoc:springdoc-openapi-kotlin:1.6.9")
     runtimeOnly("com.h2database:h2")
     implementation("io.r2dbc:r2dbc-h2")
     runtimeOnly("dev.miku:r2dbc-mysql:0.8.2.RELEASE")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,1 +1,1 @@
-rootProject.name = "naenio-server"
+rootProject.name = "naenio"
