@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
 import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import org.springdoc.core.annotations.RouterOperation
 import org.springdoc.core.annotations.RouterOperations
 import org.springframework.context.annotation.Bean
@@ -62,7 +63,8 @@ class MemberRouter(private val memberHandler: MemberHandler) {
                             responseCode = "200",
                             content = [Content(schema = Schema(implementation = MemberHandler.SetNicknameResponse::class))]
                         )
-                    ]
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             )]
     )

@@ -4,8 +4,11 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.security.SecurityScheme
+import org.springdoc.core.customizers.ServerBaseUrlCustomizer
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
+@Profile("beta")
 @OpenAPIDefinition(
     info = Info(
         title = "네니오 API 문서",
@@ -17,10 +20,12 @@ import org.springframework.context.annotation.Configuration
     )
 )
 @SecurityScheme(
-    name = "bearerAuth",
+    name = "Bearer Authentication",
     type = SecuritySchemeType.HTTP,
     bearerFormat = "JWT",
-    scheme = "bearer "
+    scheme = "bearer"
 )
 @Configuration
-class OpenApiConfiguration
+class OpenApiConfiguration : ServerBaseUrlCustomizer {
+    override fun customize(serverBaseUrl: String?): String = "https://teamversus.shop"
+}
