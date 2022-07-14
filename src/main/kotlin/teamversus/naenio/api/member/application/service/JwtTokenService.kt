@@ -12,7 +12,6 @@ import java.util.*
 private const val ISSUER = "naenio"
 private const val SUBJECT = "auth"
 private const val DAYS_OF_YEAR = 365L
-
 private const val ID = "id"
 
 @Service

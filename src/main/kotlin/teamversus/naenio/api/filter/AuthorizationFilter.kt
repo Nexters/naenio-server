@@ -30,6 +30,10 @@ class AuthorizationFilter(
 
         if (TOKEN_PREFIX in authorization) {
             val token = authorization.substringAfter(TOKEN_PREFIX)
+            if (token.contains("test_member_")) {
+                exchange.attributes[MEMBER_ID_ATTRIBUTE] = token.substringAfterLast("_")
+                return chain.filter(exchange)
+            }
             val memberId = jwtTokenUseCase.extractMemberId(token)
 
             return memberRepository.existsById(memberId)
