@@ -6,3 +6,21 @@ CREATE TABLE IF NOT EXISTS member
     nickname          varchar(255) UNIQUE,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS post
+(
+    id        BIGINT       NOT NULL AUTO_INCREMENT,
+    member_id BIGINT       NOT NULL,
+    title     varchar(255) NOT NULL,
+    content   varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS choice
+(
+    id       BIGINT       NOT NULL AUTO_INCREMENT,
+    post_id  BIGINT       NOT NULL,
+    sequence BIGINT       NOT NULL,
+    name     varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+)

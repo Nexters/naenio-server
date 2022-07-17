@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import reactor.test.StepVerifier
-import teamversus.naenio.api.member.port.member.adapter.AppleMemberAdapter
+import teamversus.naenio.api.core.member.port.member.adapter.AppleMemberAdapter
 
 internal class AppleMemberAdapterTest {
 
