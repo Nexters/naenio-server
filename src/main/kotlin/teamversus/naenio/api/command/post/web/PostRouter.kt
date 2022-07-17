@@ -51,7 +51,7 @@ class PostRouter(
                 )
             ),
             RouterOperation(
-                path = "/app/posts/\${id}",
+                path = "/app/posts/{id}",
                 method = [RequestMethod.PUT],
                 beanClass = PostHandler::class,
                 beanMethod = "edit",

@@ -23,7 +23,7 @@ class QueryRouter(
     @Bean
     @RouterOperations(
         RouterOperation(
-            path = "/web/posts/\${id}",
+            path = "/web/posts/{id}",
             method = [RequestMethod.GET],
             beanClass = WebPostFetcher::class,
             beanMethod = "findDetailById",
