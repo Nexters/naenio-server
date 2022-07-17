@@ -12,7 +12,7 @@ interface ChoiceEditUseCase {
         val sequence: Int,
         val name: String,
     ) {
-        fun toDomain(): Choice = Choice(0, postId, sequence, name)
+        fun toDomain(): Choice = Choice(id, postId, sequence, name)
     }
 
     data class Result(
