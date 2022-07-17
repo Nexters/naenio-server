@@ -97,10 +97,11 @@ class PostHandler(
                     result.memberId,
                     result.title,
                     result.content,
-                    result.choices.map { Choice(it.sequence, it.name) })
+                    result.choices.map { Choice(it.id, it.sequence, it.name) })
         }
 
         data class Choice(
+            val id: Long,
             val sequence: Int,
             val name: String,
         )
