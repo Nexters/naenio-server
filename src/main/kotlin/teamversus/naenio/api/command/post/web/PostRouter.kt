@@ -80,7 +80,7 @@ class PostRouter(
     fun postRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/posts", postHandler::create)
-            PUT("/app/posts", postHandler::edit)
+            PUT("/app/posts/{id}", postHandler::edit)
         }
     }
 }

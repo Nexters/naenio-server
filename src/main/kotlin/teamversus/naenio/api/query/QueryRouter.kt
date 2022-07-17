@@ -47,7 +47,7 @@ class QueryRouter(
     )
     fun queryRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
-            GET("/web/posts", webPostFetcher::findDetailById)
+            GET("/web/posts/{id}", webPostFetcher::findDetailById)
         }
     }
 }
