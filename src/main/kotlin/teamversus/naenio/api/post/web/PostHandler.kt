@@ -6,13 +6,13 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.post.application.PostCreateUseCase
-import teamversus.naenio.api.post.application.PostEditUseCase
+import teamversus.naenio.api.post.application.PostDeleteUseCase
 import teamversus.naenio.api.support.okWithBody
 
 @Component
 class PostHandler(
     private val postCreateUseCase: PostCreateUseCase,
-    private val postEditUseCase: PostEditUseCase,
+    private val postDeleteUseCase: PostDeleteUseCase,
 ) {
     fun create(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(CreatePostRequest::class.java)
@@ -58,53 +58,7 @@ class PostHandler(
         )
     }
 
-    fun edit(request: ServerRequest): Mono<ServerResponse> =
-        request.bodyToMono(EditPostRequest::class.java)
-            .flatMap { postEditUseCase.edit(request.pathVariable("id").toLong(), it.toCommand(), request.memberId()) }
-            .map { EditPostResponse.from(it) }
-            .flatMap(::okWithBody)
-
-    data class EditPostRequest(
-        val title: String,
-        val content: String,
-        val choices: List<EditChoiceRequest>,
-    ) {
-        data class EditChoiceRequest(
-            val id: Long,
-            val sequence: Int,
-            val name: String,
-        )
-
-        fun toCommand(): PostEditUseCase.Command =
-            PostEditUseCase.Command(
-                title,
-                content,
-                choices.map { PostEditUseCase.Command.ChoiceCommand(it.id, it.sequence, it.name) })
-
-    }
-
-    data class EditPostResponse(
-        val id: Long,
-        val memberId: Long,
-        val title: String,
-        val content: String,
-        val choices: List<Choice>,
-    ) {
-        companion object {
-            fun from(result: PostEditUseCase.Result): EditPostResponse =
-                EditPostResponse(
-                    result.id,
-                    result.memberId,
-                    result.title,
-                    result.content,
-                    result.choices.map { Choice(it.id, it.sequence, it.name) })
-        }
-
-        data class Choice(
-            val id: Long,
-            val sequence: Int,
-            val name: String,
-        )
-    }
-
+    fun delete(request: ServerRequest): Mono<ServerResponse> =
+        postDeleteUseCase.deleteById(request.pathVariable("id").toLong())
+            .flatMap { ServerResponse.noContent().build() }
 }

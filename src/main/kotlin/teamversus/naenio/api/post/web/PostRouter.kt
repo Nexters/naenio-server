@@ -19,9 +19,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 
 @Configuration
-class PostRouter(
-    private val postHandler: PostHandler,
-) {
+class PostRouter(private val postHandler: PostHandler) {
     @Bean
     @RouterOperations(
         value = [
@@ -52,16 +50,13 @@ class PostRouter(
             ),
             RouterOperation(
                 path = "/app/posts/{id}",
-                method = [RequestMethod.PUT],
+                method = [RequestMethod.DELETE],
                 beanClass = PostHandler::class,
-                beanMethod = "edit",
+                beanMethod = "delete",
                 operation = Operation(
                     tags = ["게시글"],
-                    summary = "게시글 수정",
-                    operationId = "editPost",
-                    requestBody = RequestBody(
-                        content = [Content(schema = Schema(implementation = PostHandler.EditPostRequest::class))]
-                    ),
+                    summary = "게시글 삭제",
+                    operationId = "deletePost",
                     parameters = [Parameter(
                         name = "id",
                         `in` = ParameterIn.PATH,
@@ -70,17 +65,17 @@ class PostRouter(
                     responses = [
                         ApiResponse(
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = PostHandler.EditPostResponse::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
-            )],
+            )
+        ],
     )
     fun postRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/posts", postHandler::create)
-            PUT("/app/posts/{id}", postHandler::edit)
+            DELETE("/app/posts/{id}", postHandler::delete)
         }
     }
 }
