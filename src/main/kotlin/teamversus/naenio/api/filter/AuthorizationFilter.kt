@@ -7,8 +7,8 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import teamversus.naenio.api.member.application.JwtTokenUseCase
-import teamversus.naenio.api.member.domain.model.MemberRepository
+import teamversus.naenio.api.domain.member.application.JwtTokenUseCase
+import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 
 private const val MEMBER_ID_ATTRIBUTE = "memberId"
 private const val TOKEN_PREFIX = "Bearer "
