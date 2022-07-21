@@ -7,8 +7,10 @@ import java.time.LocalDateTime
 
 abstract class AggregateRoot<A : AbstractAggregateRoot<A>> : AbstractAggregateRoot<A>() {
     @CreatedDate
-    lateinit var createdDateTime: LocalDateTime
+    var createdDateTime: LocalDateTime = LocalDateTime.MIN
+        private set
 
     @LastModifiedDate
-    lateinit var lastModifiedDateTime: LocalDateTime
+    var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN
+        private set
 }
