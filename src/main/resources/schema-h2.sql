@@ -23,4 +23,11 @@ CREATE TABLE IF NOT EXISTS choice
     sequence BIGINT       NOT NULL,
     name     varchar(255) NOT NULL,
     PRIMARY KEY (id)
-)
+);
+
+CREATE TABLE IF NOT EXISTS category
+(
+    id   BIGINT       NOT NULL AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    PRIMARY KEY (id)
+);
