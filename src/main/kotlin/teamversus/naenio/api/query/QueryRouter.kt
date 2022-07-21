@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import teamversus.naenio.api.query.fetcher.AppCategoryFetcher
 import teamversus.naenio.api.query.fetcher.AppThemeFetcher
+import teamversus.naenio.api.query.fetcher.WebPostFetcher
 import teamversus.naenio.api.query.model.Theme
 import teamversus.naenio.api.query.result.AppCategoriesQueryResult
 import teamversus.naenio.api.query.result.WebPostDetailQueryResult

@@ -1,4 +1,4 @@
-package teamversus.naenio.api.query
+package teamversus.naenio.api.query.fetcher
 
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
