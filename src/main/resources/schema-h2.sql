@@ -1,9 +1,11 @@
 CREATE TABLE IF NOT EXISTS member
 (
-    id                BIGINT       NOT NULL AUTO_INCREMENT,
-    auth_id           varchar(255) NOT NULL,
-    auth_service_type varchar(255) NOT NULL,
-    nickname          varchar(255) UNIQUE,
+    id                      BIGINT       NOT NULL AUTO_INCREMENT,
+    auth_id                 varchar(255) NOT NULL,
+    auth_service_type       varchar(255) NOT NULL,
+    nickname                varchar(255) UNIQUE,
+    created_date_time       DATETIME     NOT NULL,
+    last_modified_date_time DATETIME     NOT NULL,
     PRIMARY KEY (id)
 );
 
