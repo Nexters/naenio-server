@@ -33,6 +33,6 @@ class JwtTokenService(@Value("\${auth.jwt.secret}") private val secret: String) 
     override fun extractMemberId(token: String): Long =
         Jwts.parser()
             .setSigningKey(Base64.getEncoder().encodeToString(secret.toByteArray()))
-            .parseClaimsJwt(token)
+            .parseClaimsJws(token)
             .body[ID] as Long
 }
