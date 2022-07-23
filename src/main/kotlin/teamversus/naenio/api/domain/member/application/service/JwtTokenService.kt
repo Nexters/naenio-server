@@ -34,5 +34,5 @@ class JwtTokenService(@Value("\${auth.jwt.secret}") private val secret: String) 
         Jwts.parser()
             .setSigningKey(Base64.getEncoder().encodeToString(secret.toByteArray()))
             .parseClaimsJws(token)
-            .body[ID] as Long
+            .body[ID].toString().toLong()
 }
