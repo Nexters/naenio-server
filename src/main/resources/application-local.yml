@@ -8,6 +8,8 @@ spring:
 auth:
   jwt:
     secret: "local"
+  google:
+    client-id: "clientId"
 
 logging:
   level:

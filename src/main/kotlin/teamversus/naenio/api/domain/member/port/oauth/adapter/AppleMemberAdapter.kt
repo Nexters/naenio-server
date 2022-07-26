@@ -1,4 +1,4 @@
-package teamversus.naenio.api.domain.member.port.member.adapter
+package teamversus.naenio.api.domain.member.port.oauth.adapter
 
 import io.jsonwebtoken.Jwts
 import org.springframework.boot.json.GsonJsonParser
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
-import teamversus.naenio.api.domain.member.port.member.ExternalMemberLoadPort
+import teamversus.naenio.api.domain.member.port.oauth.ExternalMemberLoadPort
 import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.spec.RSAPublicKeySpec

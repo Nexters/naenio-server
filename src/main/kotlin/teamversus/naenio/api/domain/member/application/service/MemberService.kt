@@ -9,7 +9,7 @@ import teamversus.naenio.api.domain.member.application.MemberExistByNicknameUseC
 import teamversus.naenio.api.domain.member.application.MemberSetNicknameUseCase
 import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
-import teamversus.naenio.api.domain.member.port.member.ExternalMemberLoadPort
+import teamversus.naenio.api.domain.member.port.oauth.ExternalMemberLoadPort
 
 
 @Service

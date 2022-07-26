@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("com.google.code.gson:gson:2.9.0")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("com.google.api-client:google-api-client:1.32.1")
     implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
     implementation("org.springdoc:springdoc-openapi-webflux-core:1.6.9")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.6.9")

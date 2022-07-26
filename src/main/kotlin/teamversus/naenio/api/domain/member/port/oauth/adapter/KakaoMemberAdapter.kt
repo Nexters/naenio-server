@@ -1,4 +1,4 @@
-package teamversus.naenio.api.domain.member.port.member.adapter
+package teamversus.naenio.api.domain.member.port.oauth.adapter
 
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
-import teamversus.naenio.api.domain.member.port.member.ExternalMemberLoadPort
+import teamversus.naenio.api.domain.member.port.oauth.ExternalMemberLoadPort
 
 private const val KAKAO_USER_ME_URL = "https://kapi.kakao.com/v2/user/me"
 private const val TOKEN_PREFIX = "Bearer"

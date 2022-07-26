@@ -1,4 +1,4 @@
-package teamversus.naenio.api.domain.member.port.member
+package teamversus.naenio.api.domain.member.port.oauth
 
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
