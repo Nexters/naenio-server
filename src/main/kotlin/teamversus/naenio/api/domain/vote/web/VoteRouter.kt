@@ -47,7 +47,7 @@ class VoteRouter(private val voteHandler: VoteHandler) {
                 )
             )]
     )
-    fun postRouterFunction(): RouterFunction<ServerResponse> = router {
+    fun voteRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/votes", voteHandler::cast)
         }
