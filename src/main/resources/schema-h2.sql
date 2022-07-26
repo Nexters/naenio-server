@@ -46,3 +46,13 @@ CREATE TABLE IF NOT EXISTS vote
     last_modified_date_time DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS comment
+(
+    id                      BIGINT       NOT NULL AUTO_INCREMENT,
+    member_id               BIGINT       NOT NULL,
+    content                 varchar(255) NOT NULL,
+    created_date_time       DATETIME     NOT NULL,
+    last_modified_date_time DATETIME     NOT NULL,
+    PRIMARY KEY (id)
+);

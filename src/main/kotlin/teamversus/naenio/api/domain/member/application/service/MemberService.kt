@@ -41,6 +41,7 @@ class MemberService(
             .map { it.changeNickname(nickname) }
             .flatMap {
                 memberRepository.save(it)
+                    // TODO: 2022/07/26 에러 코드 나눠야함
                     .onErrorMap(this::isDuplicateEntryError) { IllegalArgumentException("중복된 닉네임") }
             }
             .map { MemberSetNicknameUseCase.Response(it.nickname!!) }
