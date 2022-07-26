@@ -47,7 +47,7 @@ class CommentRouter(private val commentHandler: CommentHandler) {
                 )
             )]
     )
-    fun voteRouterFunction(): RouterFunction<ServerResponse> = router {
+    fun commentRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/votes", commentHandler::create)
         }
