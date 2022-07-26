@@ -1,5 +1,6 @@
 package teamversus.naenio.api.domain.member.application.service
 
+import io.r2dbc.spi.R2dbcDataIntegrityViolationException
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
@@ -11,6 +12,8 @@ import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.member.port.oauth.ExternalMemberLoadPort
 
+
+private const val DUPLICATE_ENTRY_CODE = 1062
 
 @Service
 class MemberService(
@@ -36,7 +39,14 @@ class MemberService(
             .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 memberId=${memberId}")) }
             .map { it.changeNickname(nickname) }
             .flatMap {
-                memberRepository.save(it)
+                try {
+                    memberRepository.save(it)
+                } catch (e: R2dbcDataIntegrityViolationException) {
+                    if (e.errorCode == DUPLICATE_ENTRY_CODE) {
+                        return@flatMap Mono.error(IllegalArgumentException("이미 존재하는 닉네임입니다."))
+                    }
+                    Mono.error(e)
+                }
             }
             .map { MemberSetNicknameUseCase.Response(it.nickname!!) }
 
