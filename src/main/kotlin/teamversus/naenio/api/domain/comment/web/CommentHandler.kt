@@ -6,6 +6,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.comment.application.CommentCreateUseCase
 import teamversus.naenio.api.domain.comment.application.CommentDeleteUseCase
+import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.support.okWithBody
 import java.time.LocalDateTime
@@ -27,15 +28,18 @@ class CommentHandler(
 
 
     data class CreateCommentRequest(
-        val postId: Long,
+        val parentId: Long,
+        val parentType: CommentParent,
         val content: String,
     ) {
-        fun toCommand(): CommentCreateUseCase.Command = CommentCreateUseCase.Command(postId, content)
+        fun toCommand(): CommentCreateUseCase.Command = CommentCreateUseCase.Command(parentId, parentType, content)
     }
 
     data class CreateCommentResponse(
         val id: Long,
         val memberId: Long,
+        val parentId: Long,
+        val parentType: CommentParent,
         val content: String,
         val createdDateTime: LocalDateTime,
         val lastModifiedDateTime: LocalDateTime,
@@ -45,6 +49,8 @@ class CommentHandler(
                 CreateCommentResponse(
                     result.id,
                     result.memberId,
+                    result.parentId,
+                    result.parentType,
                     result.content,
                     result.createdDateTime,
                     result.lastModifiedDateTime

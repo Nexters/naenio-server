@@ -56,7 +56,7 @@ class CommentRouter(private val commentHandler: CommentHandler) {
                 operation = Operation(
                     tags = ["댓글"],
                     summary = "댓글 삭제",
-                    operationId = "createComment",
+                    operationId = "deleteComment",
                     parameters = [Parameter(
                         name = "id",
                         `in` = ParameterIn.PATH,
