@@ -1,6 +1,8 @@
 package teamversus.naenio.api.domain.comment.web
 
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -45,11 +47,34 @@ class CommentRouter(private val commentHandler: CommentHandler) {
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
+            ),
+            RouterOperation(
+                path = "/app/comments/{id}",
+                method = [RequestMethod.DELETE],
+                beanClass = CommentHandler::class,
+                beanMethod = "delete",
+                operation = Operation(
+                    tags = ["댓글"],
+                    summary = "댓글 삭제",
+                    operationId = "createComment",
+                    parameters = [Parameter(
+                        name = "id",
+                        `in` = ParameterIn.PATH,
+                        required = true
+                    )],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "204",
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
             )]
     )
     fun commentRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
-            POST("/app/votes", commentHandler::create)
+            POST("/app/comments", commentHandler::create)
+            DELETE("/app/comments/{id}", commentHandler::delete)
         }
     }
 }

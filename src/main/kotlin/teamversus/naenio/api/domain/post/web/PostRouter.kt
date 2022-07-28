@@ -64,7 +64,7 @@ class PostRouter(private val postHandler: PostHandler) {
                     )],
                     responses = [
                         ApiResponse(
-                            responseCode = "200",
+                            responseCode = "204",
                         )
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]

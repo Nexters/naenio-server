@@ -5,6 +5,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.comment.application.CommentCreateUseCase
+import teamversus.naenio.api.domain.comment.application.CommentDeleteUseCase
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.support.okWithBody
 import java.time.LocalDateTime
@@ -12,12 +13,18 @@ import java.time.LocalDateTime
 @Component
 class CommentHandler(
     private val commentCreateUseCase: CommentCreateUseCase,
+    private val commentDeleteUseCase: CommentDeleteUseCase,
 ) {
     fun create(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(CreateCommentRequest::class.java)
             .flatMap { commentCreateUseCase.create(it.toCommand(), request.memberId()) }
             .map { CreateCommentResponse.from(it) }
             .flatMap(::okWithBody)
+
+    fun delete(request: ServerRequest): Mono<ServerResponse> =
+        commentDeleteUseCase.delete(request.pathVariable("id").toLong())
+            .flatMap { ServerResponse.noContent().build() }
+
 
     data class CreateCommentRequest(
         val postId: Long,
