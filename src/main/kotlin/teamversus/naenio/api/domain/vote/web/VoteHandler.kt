@@ -20,11 +20,10 @@ class VoteHandler(
             .flatMap(::okWithBody)
 
     data class CastVoteRequest(
-        val postId: Long,
         val choiceId: Long,
         val previousVoteId: Long?,
     ) {
-        fun toCommand(): VoteCastUseCase.Command = VoteCastUseCase.Command(postId, choiceId, previousVoteId)
+        fun toCommand(): VoteCastUseCase.Command = VoteCastUseCase.Command(choiceId, previousVoteId)
     }
 
     data class CastVoteResponse(

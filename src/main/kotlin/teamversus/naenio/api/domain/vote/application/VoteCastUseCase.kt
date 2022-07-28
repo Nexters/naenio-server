@@ -8,7 +8,6 @@ interface VoteCastUseCase {
     fun cast(command: Command, memberId: Long): Mono<Result>
 
     data class Command(
-        val postId: Long,
         val choiceId: Long,
         val previousVoteId: Long?,
     ) {
