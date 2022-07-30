@@ -58,3 +58,13 @@ CREATE TABLE IF NOT EXISTS comment
     last_modified_date_time DATETIME     NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS comment_like
+(
+    id                      BIGINT   NOT NULL AUTO_INCREMENT,
+    comment_id              BIGINT   NOT NULL,
+    member_id               BIGINT   NOT NULL,
+    created_date_time       DATETIME NOT NULL,
+    last_modified_date_time DATETIME NOT NULL,
+    PRIMARY KEY (id)
+);
