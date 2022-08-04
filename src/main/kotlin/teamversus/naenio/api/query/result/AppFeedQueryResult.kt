@@ -23,7 +23,7 @@ data class AppFeedQueryResult(
             val id: Long,
             val sequence: Int,
             val name: String,
-            val isSelected: Boolean,
+            val isVoted: Boolean,
             val voteCount: Long,
         )
     }
