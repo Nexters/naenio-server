@@ -17,10 +17,12 @@ import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import teamversus.naenio.api.query.fetcher.AppCategoryFetcher
+import teamversus.naenio.api.query.fetcher.AppMemberFetcher
 import teamversus.naenio.api.query.fetcher.AppThemeFetcher
 import teamversus.naenio.api.query.fetcher.WebPostFetcher
 import teamversus.naenio.api.query.model.Theme
 import teamversus.naenio.api.query.result.AppCategoriesQueryResult
+import teamversus.naenio.api.query.result.AppMemberQueryResult
 import teamversus.naenio.api.query.result.WebPostDetailQueryResult
 
 @Configuration
@@ -28,6 +30,7 @@ class QueryRouter(
     private val webPostFetcher: WebPostFetcher,
     private val appCategoryFetcher: AppCategoryFetcher,
     private val appThemeFetcher: AppThemeFetcher,
+    private val appMemberFetcher: AppMemberFetcher,
 ) {
     @Bean
     @RouterOperations(
@@ -52,6 +55,24 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = WebPostDetailQueryResult::class))]
                         )
                     ],
+                )
+            ),
+            RouterOperation(
+                path = "/app/members/me",
+                method = [RequestMethod.GET],
+                beanClass = AppMemberFetcher::class,
+                beanMethod = "me",
+                operation = Operation(
+                    tags = ["회원"],
+                    summary = "회원 정보 조회",
+                    operationId = "findMe",
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppMemberQueryResult::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
@@ -96,6 +117,7 @@ class QueryRouter(
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
             GET("/app/categories", appCategoryFetcher::findAll)
+            GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
         }
     }
