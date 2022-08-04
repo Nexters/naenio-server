@@ -90,7 +90,7 @@ class QueryRouter(
                 path = "/app/members/me",
                 method = [RequestMethod.GET],
                 beanClass = AppMemberFetcher::class,
-                beanMethod = "me",
+                beanMethod = "findMe",
                 operation = Operation(
                     tags = ["회원"],
                     summary = "회원 정보 조회",
