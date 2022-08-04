@@ -6,5 +6,10 @@ import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
 interface LoginUseCase {
     fun login(authToken: String, authServiceType: AuthServiceType): Mono<LoginResult>
 
-    data class LoginResult(val token: String)
+    data class LoginResult(
+        val token: String,
+        val authServiceType: AuthServiceType,
+        val nickname: String?,
+        val profileImageIndex: Int?,
+    )
 }

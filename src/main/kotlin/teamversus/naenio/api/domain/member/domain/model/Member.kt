@@ -11,15 +11,21 @@ data class Member(
     val authId: String,
     val authServiceType: AuthServiceType,
     var nickname: String?,
+    var profileImageIndex: Int?,
     @CreatedDate
     var createdDateTime: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN,
 ) {
-    fun withId(id: Long): Member = Member(id, authId, authServiceType, nickname)
+    fun withId(id: Long): Member = Member(id, authId, authServiceType, nickname, profileImageIndex)
 
     fun changeNickname(nickname: String): Member {
         this.nickname = nickname
+        return this
+    }
+
+    fun changeProfileImage(profileImageIndex: Int): Member {
+        this.profileImageIndex = profileImageIndex
         return this
     }
 }

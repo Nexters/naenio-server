@@ -69,6 +69,27 @@ class MemberRouter(private val memberHandler: MemberHandler) {
                 )
             ),
             RouterOperation(
+                path = "/app/members/profile-image",
+                method = [RequestMethod.PUT],
+                beanClass = MemberHandler::class,
+                beanMethod = "setProfileImage",
+                operation = Operation(
+                    tags = ["회원"],
+                    summary = "프로필 이미지 설정",
+                    operationId = "setProfileImage",
+                    requestBody = RequestBody(
+                        content = [Content(schema = Schema(implementation = MemberHandler.SetProfileImageRequest::class))]
+                    ),
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = MemberHandler.SetProfileImageResponse::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
+            ),
+            RouterOperation(
                 path = "/app/members/exist",
                 method = [RequestMethod.GET],
                 beanClass = MemberHandler::class,
@@ -97,6 +118,7 @@ class MemberRouter(private val memberHandler: MemberHandler) {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/login", memberHandler::login)
             PUT("/app/members/nickname", memberHandler::setNickname)
+            PUT("/app/members/profile-image", memberHandler::setProfileImage)
             GET("/app/members/exist", memberHandler::exist)
         }
     }
