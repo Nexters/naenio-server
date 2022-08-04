@@ -18,7 +18,11 @@ class MemberService(
     private val externalMemberLoadPorts: List<ExternalMemberLoadPort>,
     private val memberRepository: MemberRepository,
     private val jwtTokenUseCase: JwtTokenUseCase,
-) : LoginUseCase, MemberSetNicknameUseCase, MemberExistByNicknameUseCase, MemberSetProfileImageUseCase {
+) : LoginUseCase,
+    MemberSetNicknameUseCase,
+    MemberExistByNicknameUseCase,
+    MemberSetProfileImageUseCase,
+    MemberWithdrawUseCase {
     override fun login(authToken: String, authServiceType: AuthServiceType): Mono<LoginUseCase.LoginResult> =
         externalMemberLoadPort(authServiceType)
             .findBy(authToken)
@@ -66,4 +70,9 @@ class MemberService(
 
     private fun isDuplicateEntryError(t: Throwable): Boolean =
         t is DataIntegrityViolationException && (t.cause as R2dbcDataIntegrityViolationException).errorCode == DUPLICATE_ENTRY_CODE
+
+    override fun withdraw(id: Long): Mono<Void> =
+        memberRepository.existsById(id)
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다. id=${id}}")) }
+            .flatMap { memberRepository.deleteById(id) }
 }

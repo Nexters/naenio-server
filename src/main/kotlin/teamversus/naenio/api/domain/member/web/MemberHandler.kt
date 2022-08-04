@@ -4,10 +4,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
-import teamversus.naenio.api.domain.member.application.LoginUseCase
-import teamversus.naenio.api.domain.member.application.MemberExistByNicknameUseCase
-import teamversus.naenio.api.domain.member.application.MemberSetNicknameUseCase
-import teamversus.naenio.api.domain.member.application.MemberSetProfileImageUseCase
+import teamversus.naenio.api.domain.member.application.*
 import teamversus.naenio.api.domain.member.domain.model.AuthServiceType
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.support.okWithBody
@@ -19,6 +16,7 @@ class MemberHandler(
     private val memberSetNicknameUseCase: MemberSetNicknameUseCase,
     private val memberExistByNicknameUseCase: MemberExistByNicknameUseCase,
     private val memberSetProfileImageUseCase: MemberSetProfileImageUseCase,
+    private val memberWithdrawUseCase: MemberWithdrawUseCase,
 ) {
     fun login(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(LoginRequest::class.java)
@@ -73,4 +71,9 @@ class MemberHandler(
             .flatMap(::okWithBody)
 
     data class ExistResponse(val exist: Boolean)
+
+    fun withdraw(request: ServerRequest): Mono<ServerResponse> =
+        memberWithdrawUseCase.withdraw(request.memberId())
+            .flatMap { ServerResponse.noContent().build() }
+
 }

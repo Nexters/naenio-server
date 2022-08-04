@@ -111,15 +111,33 @@ class MemberRouter(private val memberHandler: MemberHandler) {
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
-            )],
-
-        )
+            ),
+            RouterOperation(
+                path = "/app/members/me",
+                method = [RequestMethod.DELETE],
+                beanClass = MemberHandler::class,
+                beanMethod = "withdraw",
+                operation = Operation(
+                    tags = ["회원"],
+                    summary = "탈퇴",
+                    operationId = "withdraw",
+                    responses = [
+                        ApiResponse(
+                            responseCode = "204",
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
+            ),
+        ]
+    )
     fun memberRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/login", memberHandler::login)
             PUT("/app/members/nickname", memberHandler::setNickname)
             PUT("/app/members/profile-image", memberHandler::setProfileImage)
             GET("/app/members/exist", memberHandler::exist)
+            DELETE("/app/members/me", memberHandler::withdraw)
         }
     }
 }
