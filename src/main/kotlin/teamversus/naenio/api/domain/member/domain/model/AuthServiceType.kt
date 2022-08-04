@@ -4,4 +4,5 @@ enum class AuthServiceType {
     KAKAO,
     APPLE,
     GOOGLE,
+    UNKNOWN,
 }

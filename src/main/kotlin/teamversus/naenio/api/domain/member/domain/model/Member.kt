@@ -28,4 +28,8 @@ data class Member(
         this.profileImageIndex = profileImageIndex
         return this
     }
+
+    companion object {
+        fun withdrawMember() = Member(0, "withdraw", AuthServiceType.UNKNOWN, null, null)
+    }
 }

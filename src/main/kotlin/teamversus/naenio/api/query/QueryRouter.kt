@@ -16,12 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
-import teamversus.naenio.api.query.fetcher.AppCategoryFetcher
-import teamversus.naenio.api.query.fetcher.AppMemberFetcher
-import teamversus.naenio.api.query.fetcher.AppThemeFetcher
-import teamversus.naenio.api.query.fetcher.WebPostFetcher
+import teamversus.naenio.api.query.fetcher.*
 import teamversus.naenio.api.query.model.Theme
 import teamversus.naenio.api.query.result.AppCategoriesQueryResult
+import teamversus.naenio.api.query.result.AppFeedQueryResult
 import teamversus.naenio.api.query.result.AppMemberQueryResult
 import teamversus.naenio.api.query.result.WebPostDetailQueryResult
 
@@ -31,6 +29,7 @@ class QueryRouter(
     private val appCategoryFetcher: AppCategoryFetcher,
     private val appThemeFetcher: AppThemeFetcher,
     private val appMemberFetcher: AppMemberFetcher,
+    private val appFeedFetcher: AppFeedFetcher,
 ) {
     @Bean
     @RouterOperations(
@@ -53,6 +52,36 @@ class QueryRouter(
                         ApiResponse(
                             responseCode = "200",
                             content = [Content(schema = Schema(implementation = WebPostDetailQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
+                path = "/app/feed",
+                method = [RequestMethod.GET],
+                beanClass = AppFeedFetcher::class,
+                beanMethod = "findFeed",
+                operation = Operation(
+                    tags = ["피드"],
+                    summary = "피드조회",
+                    operationId = "findFeed",
+                    parameters = [
+                        Parameter(
+                            name = "size",
+                            `in` = ParameterIn.QUERY,
+                            required = true
+                        ),
+                        Parameter(
+                            name = "lastPostId",
+                            `in` = ParameterIn.QUERY,
+                            required = false,
+                            description = "첫 조회의 경우 lastPostId를 비워서 보내면 됩니다."
+                        ),
+                    ],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppFeedQueryResult::class))]
                         )
                     ],
                 )
@@ -119,6 +148,7 @@ class QueryRouter(
             GET("/app/categories", appCategoryFetcher::findAll)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
+            GET("/app/feed", appFeedFetcher::findFeed)
         }
     }
 }
