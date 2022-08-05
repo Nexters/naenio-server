@@ -18,10 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.router
 import teamversus.naenio.api.query.fetcher.*
 import teamversus.naenio.api.query.model.Theme
-import teamversus.naenio.api.query.result.AppCategoriesQueryResult
-import teamversus.naenio.api.query.result.AppFeedQueryResult
-import teamversus.naenio.api.query.result.AppMemberQueryResult
-import teamversus.naenio.api.query.result.WebPostDetailQueryResult
+import teamversus.naenio.api.query.result.*
 
 @Configuration
 class QueryRouter(
@@ -30,6 +27,7 @@ class QueryRouter(
     private val appThemeFetcher: AppThemeFetcher,
     private val appMemberFetcher: AppMemberFetcher,
     private val appFeedFetcher: AppFeedFetcher,
+    private val appCommentFetcher: AppCommentFetcher,
 ) {
     @Bean
     @RouterOperations(
@@ -75,13 +73,85 @@ class QueryRouter(
                             name = "lastPostId",
                             `in` = ParameterIn.QUERY,
                             required = false,
-                            description = "첫 조회의 경우 lastPostId를 비워서 보내면 됩니다."
+                            description = "첫 조회, 새로고침의 경우 lastPostId를 비워서 보내면 됩니다."
                         ),
                     ],
                     responses = [
                         ApiResponse(
                             responseCode = "200",
                             content = [Content(schema = Schema(implementation = AppFeedQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
+                path = "/app/posts/{id}/comments",
+                method = [RequestMethod.GET],
+                beanClass = AppCommentFetcher::class,
+                beanMethod = "findPostComments",
+                operation = Operation(
+                    tags = ["댓글"],
+                    summary = "게시글 댓글 조회",
+                    operationId = "findPostComments",
+                    parameters = [
+                        Parameter(
+                            name = "id",
+                            `in` = ParameterIn.PATH,
+                            required = true,
+                            description = "게시글 아이디"
+                        ),
+                        Parameter(
+                            name = "size",
+                            `in` = ParameterIn.QUERY,
+                            required = true
+                        ),
+                        Parameter(
+                            name = "lastCommentId",
+                            `in` = ParameterIn.QUERY,
+                            required = false,
+                            description = "첫 조회, 새로고침의 경우 lastCommentId를 비워서 보내면 됩니다."
+                        ),
+                    ],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppPostCommentsQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
+                path = "/app/comments/{id}/comment-replies",
+                method = [RequestMethod.GET],
+                beanClass = AppCommentFetcher::class,
+                beanMethod = "findCommentReplies",
+                operation = Operation(
+                    tags = ["댓글"],
+                    summary = "대댓글 조회",
+                    operationId = "findCommentReplies",
+                    parameters = [
+                        Parameter(
+                            name = "id",
+                            `in` = ParameterIn.PATH,
+                            required = true,
+                            description = "댓글 아이디"
+                        ),
+                        Parameter(
+                            name = "size",
+                            `in` = ParameterIn.QUERY,
+                            required = true
+                        ),
+                        Parameter(
+                            name = "lastCommentId",
+                            `in` = ParameterIn.QUERY,
+                            required = false,
+                            description = "첫 조회, 새로고침의 경우 lastCommentId를 비워서 보내면 됩니다."
+                        ),
+                    ],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppCommentRepliesQueryResult::class))]
                         )
                     ],
                 )
@@ -149,6 +219,8 @@ class QueryRouter(
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
             GET("/app/feed", appFeedFetcher::findFeed)
+            GET("/app/posts/{id}/comments", appCommentFetcher::findPostComments)
+            GET("/app/comments/{id}/comment-replies", appCommentFetcher::findCommentReplies)
         }
     }
 }

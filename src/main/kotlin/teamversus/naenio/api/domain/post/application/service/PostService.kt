@@ -51,7 +51,8 @@ class PostService(
 
     @Transactional
     override fun deleteById(id: Long): Mono<Void> =
-        postRepository.existsById(id)
+        Mono.just(id)
+            .filterWhen { postRepository.existsById(it) }
             .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 게시글 입니다. id=${id}}")) }
             .flatMap { choiceDeleteUseCase.deleteAllByPostId(id) }
             .flatMap { postRepository.deleteById(id) }

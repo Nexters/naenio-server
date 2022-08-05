@@ -7,6 +7,7 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.member.application.JwtTokenUseCase
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 
@@ -36,15 +37,12 @@ class AuthorizationFilter(
             }
             val memberId = jwtTokenUseCase.extractMemberId(token)
 
-            return memberRepository.existsById(memberId)
+            return Mono.just(memberId)
+                .filterWhen { memberRepository.existsById(it) }
+                .switchIfEmpty { Mono.error(IllegalArgumentException("id와 일치하는 회원이 존재하지 않습니다. id=${memberId}")) }
                 .flatMap {
-                    when {
-                        !it -> Mono.error(IllegalArgumentException("id와 일치하는 회원이 존재하지 않습니다. id=${memberId}"))
-                        else -> {
-                            exchange.attributes[MEMBER_ID_ATTRIBUTE] = memberId
-                            chain.filter(exchange)
-                        }
-                    }
+                    exchange.attributes[MEMBER_ID_ATTRIBUTE] = it
+                    chain.filter(exchange)
                 }
         }
 

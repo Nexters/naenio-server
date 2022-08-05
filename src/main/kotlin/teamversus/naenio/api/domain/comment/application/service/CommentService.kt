@@ -35,7 +35,8 @@ class CommentService(
 
     @Transactional
     override fun delete(id: Long): Mono<Void> =
-        commentRepository.existsById(id)
+        Mono.just(id)
+            .filterWhen { commentRepository.existsById(it) }
             .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 댓글 입니다. id=${id}}")) }
             .flatMap { commentRepository.deleteById(id) }
 }

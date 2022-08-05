@@ -3,6 +3,7 @@ package teamversus.naenio.api.domain.member.application.service
 import io.r2dbc.spi.R2dbcDataIntegrityViolationException
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.member.application.*
@@ -71,8 +72,10 @@ class MemberService(
     private fun isDuplicateEntryError(t: Throwable): Boolean =
         t is DataIntegrityViolationException && (t.cause as R2dbcDataIntegrityViolationException).errorCode == DUPLICATE_ENTRY_CODE
 
+    @Transactional
     override fun withdraw(id: Long): Mono<Void> =
-        memberRepository.existsById(id)
+        Mono.just(id)
+            .filterWhen { memberRepository.existsById(it) }
             .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다. id=${id}}")) }
             .flatMap { memberRepository.deleteById(id) }
 }

@@ -1,6 +1,5 @@
 package teamversus.naenio.api.query.fetcher
 
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -15,7 +14,9 @@ import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.query.result.AppFeedQueryResult
+import teamversus.naenio.api.support.lastPostIdInQueryParam
 import teamversus.naenio.api.support.okWithBody
+import teamversus.naenio.api.support.pageableOfSizeInQueryParam
 
 @Component
 class AppFeedFetcher(
@@ -25,15 +26,11 @@ class AppFeedFetcher(
     private val voteRepository: VoteRepository,
     private val commentRepository: CommentRepository,
 ) {
-    fun findFeed(request: ServerRequest): Mono<ServerResponse> {
-        val size = request.queryParam("size")
-            .orElseThrow { IllegalArgumentException("사이즈는 필수값 입니다.") }
-            .toInt()
-        val lastPostId = request.queryParam("lastPostId")
-            .orElse(Long.MAX_VALUE.toString())
-            .toLong()
-
-        return postRepository.findAllByIdLessThanOrderByIdDesc(lastPostId, Pageable.ofSize(size))
+    fun findFeed(request: ServerRequest): Mono<ServerResponse> =
+        postRepository.findAllByIdLessThanOrderByIdDesc(
+            request.lastPostIdInQueryParam(),
+            request.pageableOfSizeInQueryParam()
+        )
             .flatMap { post ->
                 Mono.zip(
                     choiceRepository.findAllByPostId(post.id)
@@ -74,6 +71,4 @@ class AppFeedFetcher(
             }
             .collectList()
             .flatMap { okWithBody(it) }
-    }
-
 }
