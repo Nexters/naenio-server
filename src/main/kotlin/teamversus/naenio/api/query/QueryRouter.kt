@@ -82,6 +82,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppFeedQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
@@ -118,6 +119,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppPostCommentsQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
@@ -154,6 +156,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppCommentRepliesQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
