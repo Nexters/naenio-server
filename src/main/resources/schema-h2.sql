@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS member
     auth_id                 varchar(255) NOT NULL,
     auth_service_type       varchar(255) NOT NULL,
     nickname                varchar(255) UNIQUE,
-    profile_image_index     BIGINT       NOT NULL,
+    profile_image_index     BIGINT       NULL,
     created_date_time       DATETIME     NOT NULL,
     last_modified_date_time DATETIME     NOT NULL,
     PRIMARY KEY (id)
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS comment
     id                      BIGINT       NOT NULL AUTO_INCREMENT,
     member_id               BIGINT       NOT NULL,
     parent_id               BIGINT       NOT NULL,
-    parent_type             VARCHAR(20)  not null,
+    parent_type             VARCHAR(20)  NOT NULL,
     content                 VARCHAR(255) NOT NULL,
     created_date_time       DATETIME     NOT NULL,
     last_modified_date_time DATETIME     NOT NULL,
