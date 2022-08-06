@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS member
     auth_id                 varchar(255) NOT NULL,
     auth_service_type       varchar(255) NOT NULL,
     nickname                varchar(255) UNIQUE,
+    profile_image_index     BIGINT       NOT NULL,
     created_date_time       DATETIME     NOT NULL,
     last_modified_date_time DATETIME     NOT NULL,
     PRIMARY KEY (id)
