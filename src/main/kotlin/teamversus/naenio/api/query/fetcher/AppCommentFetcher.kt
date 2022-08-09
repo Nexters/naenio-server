@@ -52,6 +52,7 @@ class AppCommentFetcher(
                                             tuple.t1.nickname,
                                             tuple.t1.profileImageIndex
                                         ),
+                                        comment.content,
                                         comment.createdDateTime,
                                         tuple.t2,
                                         tuple.t3,
@@ -90,6 +91,7 @@ class AppCommentFetcher(
                                         tuple.t1.nickname,
                                         tuple.t1.profileImageIndex
                                     ),
+                                    comment.content,
                                     comment.createdDateTime,
                                     tuple.t2,
                                     tuple.t3

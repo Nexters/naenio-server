@@ -8,6 +8,7 @@ data class AppCommentRepliesQueryResult(
     data class CommentReply(
         val id: Long,
         val author: Author,
+        val content: String,
         val createdDatetime: LocalDateTime,
         val likeCount: Long,
         val isLiked: Boolean,
