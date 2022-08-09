@@ -8,12 +8,9 @@ import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 @Service
 class VoteService(private val voteRepository: VoteRepository) : VoteCastUseCase {
     override fun cast(command: VoteCastUseCase.Command, memberId: Long): Mono<VoteCastUseCase.Result> =
-        command.previousVoteId?.let { previousVoteId ->
-            voteRepository.findById(previousVoteId)
-                .switchIfEmpty(Mono.error(IllegalArgumentException("투표가 존재하지 않습니다. previousVoteId=${previousVoteId}")))
-                .map { it.changeChoice(command.choiceId, memberId) }
-                .flatMap { voteRepository.save(it) }
-                .map { VoteCastUseCase.Result.of(it) }
-        } ?: voteRepository.save(command.toDomain(memberId))
+        voteRepository.findByPostIdAndMemberId(command.postId, memberId)
+            .map { it.changeChoice(command.choiceId, memberId) }
+            .switchIfEmpty(Mono.just(command.toDomain(memberId)))
+            .flatMap { voteRepository.save(it) }
             .map { VoteCastUseCase.Result.of(it) }
 }

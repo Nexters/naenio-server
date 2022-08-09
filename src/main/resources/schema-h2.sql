@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS choice
     id       BIGINT       NOT NULL AUTO_INCREMENT,
     post_id  BIGINT       NOT NULL,
     sequence BIGINT       NOT NULL,
-    name     varchar(255) NOT NULL,
+    name     VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS vote
 (
     id                      BIGINT   NOT NULL AUTO_INCREMENT,
     member_id               BIGINT   NOT NULL,
+    post_id                 BIGINT   NOT NULL,
     choice_id               BIGINT   NOT NULL,
     created_date_time       DATETIME NOT NULL,
     last_modified_date_time DATETIME NOT NULL,

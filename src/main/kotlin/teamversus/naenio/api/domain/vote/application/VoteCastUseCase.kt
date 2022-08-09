@@ -8,15 +8,16 @@ interface VoteCastUseCase {
     fun cast(command: Command, memberId: Long): Mono<Result>
 
     data class Command(
+        val postId: Long,
         val choiceId: Long,
-        val previousVoteId: Long?,
     ) {
         fun toDomain(memberId: Long): Vote =
-            Vote(0, memberId, choiceId)
+            Vote(0, memberId, postId, choiceId)
     }
 
     data class Result(
         val id: Long,
+        val postId: Long,
         val choiceId: Long,
         val memberId: Long,
         val createdDateTime: LocalDateTime,
@@ -24,7 +25,14 @@ interface VoteCastUseCase {
     ) {
         companion object {
             fun of(vote: Vote): Result =
-                Result(vote.id, vote.choiceId, vote.memberId, vote.createdDateTime, vote.lastModifiedDateTime)
+                Result(
+                    vote.id,
+                    vote.postId,
+                    vote.choiceId,
+                    vote.memberId,
+                    vote.createdDateTime,
+                    vote.lastModifiedDateTime
+                )
         }
     }
 }

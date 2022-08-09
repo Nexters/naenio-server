@@ -9,18 +9,15 @@ data class Vote(
     @Id
     val id: Long = 0,
     val memberId: Long,
+    val postId: Long,
     val choiceId: Long,
     @CreatedDate
     var createdDateTime: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN,
 ) {
-    fun withId(id: Long): Vote = Vote(id, memberId, choiceId)
+    fun withId(id: Long): Vote = Vote(id, memberId, postId, choiceId)
 
     fun changeChoice(choiceId: Long, memberId: Long) =
-        if (this.memberId == memberId) {
-            Vote(id, memberId, choiceId, createdDateTime, lastModifiedDateTime)
-        } else {
-            throw IllegalArgumentException("memberId가 일치하지 않습니다. vote.memberId=${this.memberId}, request.memberId=${memberId}")
-        }
+        Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime)
 }
