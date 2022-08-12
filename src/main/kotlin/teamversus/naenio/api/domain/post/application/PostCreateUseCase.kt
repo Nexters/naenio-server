@@ -11,7 +11,6 @@ interface PostCreateUseCase {
     data class Command(
         val title: String,
         val content: String,
-        val categoryId: Long,
         val choices: List<ChoiceCommand>,
     ) {
         data class ChoiceCommand(
@@ -19,7 +18,7 @@ interface PostCreateUseCase {
         )
 
         fun toPost(memberId: Long): Post =
-            Post(0, memberId, title, content, categoryId)
+            Post(0, memberId, title, content)
 
         fun toChoiceCreateCommands(postId: Long): List<ChoiceCreateUseCase.Command> =
             choices.mapIndexed { index, choiceCommand ->
@@ -36,7 +35,6 @@ interface PostCreateUseCase {
         val memberId: Long,
         val title: String,
         val content: String,
-        val category: Category,
         val choices: List<Choice>,
         val createdDateTime: LocalDateTime,
         val lastModifiedDateTime: LocalDateTime,
@@ -45,11 +43,6 @@ interface PostCreateUseCase {
             val id: Long,
             val postId: Long,
             val sequence: Int,
-            val name: String,
-        )
-
-        data class Category(
-            val id: Long,
             val name: String,
         )
     }

@@ -11,12 +11,11 @@ data class Post(
     val memberId: Long,
     val title: String,
     val content: String,
-    val categoryId: Long,
     @CreatedDate
     var createdDateTime: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN,
 ) {
-    fun withId(id: Long): Post = Post(id, memberId, title, content, categoryId)
+    fun withId(id: Long): Post = Post(id, memberId, title, content)
 }
 

@@ -27,7 +27,7 @@ class PostHandler(
 
     data class CreatePostRequest(
         val title: String,
-        val content: String, // TODO: 2022/07/22 디자인 확정후 삭제
+        val content: String,
         val categoryId: Long,
         val choices: List<CreateChoiceRequest>,
     ) {
@@ -39,7 +39,6 @@ class PostHandler(
             PostCreateUseCase.Command(
                 title,
                 content,
-                categoryId,
                 choices.map { PostCreateUseCase.Command.ChoiceCommand(it.name) })
     }
 
@@ -48,7 +47,6 @@ class PostHandler(
         val memberId: Long,
         val title: String,
         val content: String,
-        val category: CategoryResponse,
         val choices: List<ChoiceResponse>,
         val createdDateTime: LocalDateTime,
         val lastModifiedDateTime: LocalDateTime,
@@ -60,17 +58,11 @@ class PostHandler(
                     result.memberId,
                     result.title,
                     result.content,
-                    CategoryResponse(result.category.id, result.category.name),
                     result.choices.map { ChoiceResponse(it.id, it.sequence, it.name) },
                     result.createdDateTime,
                     result.lastModifiedDateTime,
                 )
         }
-
-        data class CategoryResponse(
-            val id: Long,
-            val name: String,
-        )
 
         data class ChoiceResponse(
             val id: Long,
