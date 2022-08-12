@@ -1,25 +1,23 @@
 package teamversus.naenio.api.query.result
 
-import java.time.LocalDateTime
-
 data class WebPostDetailQueryResult(
     val id: Long,
-    val memberId: Long,
+    val author: Author,
     val title: String,
     val content: String,
-    val category: CategoryResult,
-    val choices: List<ChoiceResult>,
-    val createdDateTime: LocalDateTime,
-    val lastModifiedDateTime: LocalDateTime,
+    val choices: List<Choice>,
+    val commentCount: Long,
+    val totalVoteCount: Long,
 ) {
-    data class ChoiceResult(
+    data class Author(
         val id: Long,
-        val sequence: Int,
-        val name: String,
+        val nickname: String?,
+        val profileImageIndex: Int?,
     )
 
-    data class CategoryResult(
+    data class Choice(
         val id: Long,
+        val sequence: Int,
         val name: String,
     )
 }
