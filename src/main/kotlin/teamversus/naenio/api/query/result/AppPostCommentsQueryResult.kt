@@ -1,5 +1,6 @@
 package teamversus.naenio.api.query.result
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDateTime
 
 data class AppPostCommentsQueryResult(
@@ -10,6 +11,7 @@ data class AppPostCommentsQueryResult(
         val id: Long,
         val author: Author,
         val content: String,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         val createdDatetime: LocalDateTime,
         val likeCount: Long,
         val isLiked: Boolean,

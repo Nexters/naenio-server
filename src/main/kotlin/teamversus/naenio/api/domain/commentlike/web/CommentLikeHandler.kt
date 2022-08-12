@@ -1,5 +1,6 @@
 package teamversus.naenio.api.domain.commentlike.web
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -35,7 +36,9 @@ class CommentLikeHandler(
         val id: Long,
         val commentId: Long,
         val memberId: Long,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         val createdDateTime: LocalDateTime,
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         val lastModifiedDateTime: LocalDateTime,
     ) {
         companion object {
