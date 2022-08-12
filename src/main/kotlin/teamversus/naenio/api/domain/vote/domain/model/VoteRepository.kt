@@ -7,6 +7,7 @@ interface VoteRepository : ReactiveCrudRepository<Vote, Long> {
     fun existsByChoiceIdAndMemberId(choiceId: Long, memberId: Long): Mono<Boolean>
 
     fun countByChoiceId(choiceId: Long): Mono<Long>
+    fun countByChoiceIdIn(choiceIds: List<Long>): Mono<Long>
 
     fun findByPostIdAndMemberId(postId: Long, memberId: Long): Mono<Vote>
 }
