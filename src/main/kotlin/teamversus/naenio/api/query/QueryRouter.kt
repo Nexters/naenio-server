@@ -75,6 +75,12 @@ class QueryRouter(
                             required = false,
                             description = "첫 조회, 새로고침의 경우 lastPostId를 비워서 보내면 됩니다."
                         ),
+                        Parameter(
+                            name = "sortType",
+                            `in` = ParameterIn.QUERY,
+                            required = false,
+                            description = "전체 조회의 경우 sortType을 비워서 보내면 됩니다."
+                        ),
                     ],
                     responses = [
                         ApiResponse(

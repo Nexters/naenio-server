@@ -6,4 +6,5 @@ import reactor.core.publisher.Flux
 
 interface PostRepository : ReactiveCrudRepository<Post, Long> {
     fun findAllByIdLessThanOrderByIdDesc(id: Long, pageable: Pageable): Flux<Post>
+    fun findAllByMemberIdAndIdLessThanOrderByIdDesc(memberId: Long, id: Long, pageable: Pageable): Flux<Post>
 }

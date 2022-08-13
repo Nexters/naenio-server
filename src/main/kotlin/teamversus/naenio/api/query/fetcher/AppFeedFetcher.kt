@@ -3,13 +3,16 @@ package teamversus.naenio.api.query.fetcher
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
+import teamversus.naenio.api.domain.feedsort.SortType
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
+import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
@@ -27,10 +30,7 @@ class AppFeedFetcher(
     private val commentRepository: CommentRepository,
 ) {
     fun findFeed(request: ServerRequest): Mono<ServerResponse> =
-        postRepository.findAllByIdLessThanOrderByIdDesc(
-            request.lastPostIdInQueryParam(),
-            request.pageableOfSizeInQueryParam()
-        )
+        findPosts(request)
             .flatMap { post ->
                 Mono.zip(
                     choiceRepository.findAllByPostId(post.id)
@@ -71,4 +71,39 @@ class AppFeedFetcher(
             }
             .collectList()
             .flatMap { okWithBody(it) }
+
+    private fun findPosts(request: ServerRequest): Flux<Post> {
+        val sortType = request.queryParam("sortType")
+
+        if (sortType.isEmpty) {
+            return postRepository.findAllByIdLessThanOrderByIdDesc(
+                request.lastPostIdInQueryParam(),
+                request.pageableOfSizeInQueryParam()
+            )
+        }
+        if (sortType.get() == SortType.MY_POST.name) {
+            return postRepository.findAllByMemberIdAndIdLessThanOrderByIdDesc(
+                request.memberId(),
+                request.lastPostIdInQueryParam(),
+                request.pageableOfSizeInQueryParam()
+            )
+        }
+        if (sortType.get() == SortType.VOTED_BY_ME.name) {
+            return voteRepository.findByPostIdAndMemberId(request.lastPostIdInQueryParam(), request.memberId())
+                .map { it.lastModifiedDateTime }
+                .flatMap { lastModifiedDateTime ->
+                    voteRepository.findByMemberIdAndLastModifiedDateTimeBeforeOrderByLastModifiedDateTimeDesc(
+                        request.memberId(),
+                        lastModifiedDateTime,
+                        request.pageableOfSizeInQueryParam()
+                    )
+                        .map { it.postId }
+                        .collectList()
+                        .flatMap {
+                            postRepository.findAllById(it).collectList()
+                        }
+                }.flatMapIterable { it }
+        }
+        throw IllegalArgumentException("지원하지 않는 sortType. sortType=${sortType}")
+    }
 }
