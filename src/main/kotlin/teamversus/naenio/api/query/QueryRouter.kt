@@ -23,7 +23,7 @@ import teamversus.naenio.api.query.result.*
 @Configuration
 class QueryRouter(
     private val webPostFetcher: WebPostFetcher,
-    private val appCategoryFetcher: AppCategoryFetcher,
+    private val appFeedSortTypeFetcher: AppFeedSortTypeFetcher,
     private val appThemeFetcher: AppThemeFetcher,
     private val appMemberFetcher: AppMemberFetcher,
     private val appFeedFetcher: AppFeedFetcher,
@@ -178,18 +178,18 @@ class QueryRouter(
                 )
             ),
             RouterOperation(
-                path = "/app/categories",
+                path = "/app/feed/sort-types",
                 method = [RequestMethod.GET],
-                beanClass = AppCategoryFetcher::class,
+                beanClass = AppFeedSortTypeFetcher::class,
                 beanMethod = "findAll",
                 operation = Operation(
-                    tags = ["카테고리"],
-                    summary = "카테고리 목록 조회",
-                    operationId = "findAllCategory",
+                    tags = ["피드"],
+                    summary = "피드 정렬 타입 목록 조회",
+                    operationId = "findAllFeedSortTypes",
                     responses = [
                         ApiResponse(
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = AppCategoriesQueryResult::class))]
+                            content = [Content(schema = Schema(implementation = AppFeedSortTypeQueryResult::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
@@ -218,7 +218,7 @@ class QueryRouter(
     fun queryRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
-            GET("/app/categories", appCategoryFetcher::findAll)
+            GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
             GET("/app/feed", appFeedFetcher::findFeed)
