@@ -29,7 +29,6 @@ class PostHandler(
     data class CreatePostRequest(
         val title: String,
         val content: String,
-        val categoryId: Long,
         val choices: List<CreateChoiceRequest>,
     ) {
         data class CreateChoiceRequest(
