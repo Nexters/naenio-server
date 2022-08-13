@@ -10,12 +10,14 @@ import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
+import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.query.result.AppPostDetailQueryResult
 import teamversus.naenio.api.support.okWithBody
 import teamversus.naenio.api.support.pathVariableId
+import kotlin.random.Random
 
 @Component
 class AppPostFetcher(
@@ -27,43 +29,55 @@ class AppPostFetcher(
 ) {
     fun findDetailById(request: ServerRequest): Mono<ServerResponse> =
         postRepository.findById(request.pathVariableId())
-            .flatMap { post ->
-                Mono.zip(
-                    choiceRepository.findAllByPostId(post.id)
-                        .flatMap {
-                            Mono.zip(
-                                voteRepository.existsByChoiceIdAndMemberId(it.id, request.memberId()),
-                                voteRepository.countByChoiceId(it.id)
-                            )
-                                .map { tuple ->
-                                    AppPostDetailQueryResult.Choice(
-                                        it.id,
-                                        it.sequence,
-                                        it.name,
-                                        tuple.t1,
-                                        tuple.t2
-                                    )
-                                }
-                        }
-                        .collectList(),
-                    memberRepository.findById(post.memberId)
-                        .switchIfEmpty { Mono.just(Member.withdrawMember()) },
-                    commentRepository.countByParentIdAndParentType(post.id, CommentParent.POST)
-                )
-                    .map {
-                        AppPostDetailQueryResult(
-                            post.id,
-                            AppPostDetailQueryResult.Author(
-                                it.t2.id,
-                                it.t2.nickname,
-                                it.t2.profileImageIndex
-                            ),
-                            post.title,
-                            post.content,
-                            it.t1,
-                            it.t3
-                        )
-                    }
-            }
+            .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
+
+
+    fun findDetailByRandom(request: ServerRequest): Mono<ServerResponse> =
+        postRepository.count()
+            .flatMap { postRepository.findById(Random.nextLong(1, it + 1)) }
+            .repeatWhenEmpty(10) {
+                postRepository.count()
+                    .flatMap { postRepository.findById(Random.nextLong(1, it + 1)) }
+            }
+            .flatMap { fetchWith(it, request.memberId()) }
+            .flatMap { okWithBody(it) }
+
+    private fun fetchWith(post: Post, memberId: Long) =
+        Mono.zip(
+            choiceRepository.findAllByPostId(post.id)
+                .flatMap {
+                    Mono.zip(
+                        voteRepository.existsByChoiceIdAndMemberId(it.id, memberId),
+                        voteRepository.countByChoiceId(it.id)
+                    )
+                        .map { tuple ->
+                            AppPostDetailQueryResult.Choice(
+                                it.id,
+                                it.sequence,
+                                it.name,
+                                tuple.t1,
+                                tuple.t2
+                            )
+                        }
+                }
+                .collectList(),
+            memberRepository.findById(post.memberId)
+                .switchIfEmpty { Mono.just(Member.withdrawMember()) },
+            commentRepository.countByParentIdAndParentType(post.id, CommentParent.POST)
+        )
+            .map {
+                AppPostDetailQueryResult(
+                    post.id,
+                    AppPostDetailQueryResult.Author(
+                        it.t2.id,
+                        it.t2.nickname,
+                        it.t2.profileImageIndex
+                    ),
+                    post.title,
+                    post.content,
+                    it.t1,
+                    it.t3
+                )
+            }
 }

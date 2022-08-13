@@ -78,6 +78,23 @@ class QueryRouter(
                 )
             ),
             RouterOperation(
+                path = "/app/posts/random",
+                method = [RequestMethod.GET],
+                beanClass = AppPostFetcher::class,
+                beanMethod = "findDetailByRandom",
+                operation = Operation(
+                    tags = ["게시글"],
+                    summary = "게시글 랜덤 조회",
+                    operationId = "findDetailByRandom",
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppPostDetailQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
                 path = "/app/feed",
                 method = [RequestMethod.GET],
                 beanClass = AppFeedFetcher::class,
@@ -248,6 +265,7 @@ class QueryRouter(
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
             GET("/app/posts/{id}", appPostFetcher::findDetailById)
+            GET("/app/posts/random", appPostFetcher::findDetailByRandom)
             GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
