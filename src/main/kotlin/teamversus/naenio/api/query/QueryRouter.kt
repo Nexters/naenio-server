@@ -23,6 +23,7 @@ import teamversus.naenio.api.query.result.*
 @Configuration
 class QueryRouter(
     private val webPostFetcher: WebPostFetcher,
+    private val appPostFetcher: AppPostFetcher,
     private val appFeedSortTypeFetcher: AppFeedSortTypeFetcher,
     private val appThemeFetcher: AppThemeFetcher,
     private val appMemberFetcher: AppMemberFetcher,
@@ -50,6 +51,28 @@ class QueryRouter(
                         ApiResponse(
                             responseCode = "200",
                             content = [Content(schema = Schema(implementation = WebPostDetailQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
+                path = "/app/posts/{id}",
+                method = [RequestMethod.GET],
+                beanClass = AppPostFetcher::class,
+                beanMethod = "findDetailById",
+                operation = Operation(
+                    tags = ["게시글"],
+                    summary = "게시글 상세 조회 (앱 용)",
+                    operationId = "findDetailByIdForApp",
+                    parameters = [Parameter(
+                        name = "id",
+                        `in` = ParameterIn.PATH,
+                        required = true
+                    )],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppPostDetailQueryResult::class))]
                         )
                     ],
                 )
@@ -224,6 +247,7 @@ class QueryRouter(
     fun queryRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
+            GET("/app/posts/{id}", appPostFetcher::findDetailById)
             GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)

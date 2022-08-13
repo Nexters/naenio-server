@@ -1,8 +1,6 @@
 package teamversus.naenio.api.domain.commentlike.web
 
 import io.swagger.v3.oas.annotations.Operation
-import io.swagger.v3.oas.annotations.Parameter
-import io.swagger.v3.oas.annotations.enums.ParameterIn
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -35,7 +33,7 @@ class CommentLikeRouter(private val commentLikeHandler: CommentLikeHandler) {
                     requestBody = RequestBody(
                         content = [Content(
                             schema = Schema(
-                                implementation = CommentLikeHandler.LikeCommentRequest::class
+                                implementation = CommentLikeHandler.CommentRequest::class
                             )
                         )]
                     ),
@@ -57,11 +55,13 @@ class CommentLikeRouter(private val commentLikeHandler: CommentLikeHandler) {
                     tags = ["댓글 좋아요"],
                     summary = "댓글 좋아요 취소",
                     operationId = "deleteCommentLike",
-                    parameters = [Parameter(
-                        name = "id",
-                        `in` = ParameterIn.PATH,
-                        required = true
-                    )],
+                    requestBody = RequestBody(
+                        content = [Content(
+                            schema = Schema(
+                                implementation = CommentLikeHandler.CommentRequest::class
+                            )
+                        )]
+                    ),
                     responses = [
                         ApiResponse(
                             responseCode = "204",

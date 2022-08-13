@@ -17,16 +17,17 @@ class CommentLikeHandler(
     private val commentLikeDeleteUseCase: CommentLikeDeleteUseCase,
 ) {
     fun like(request: ServerRequest): Mono<ServerResponse> =
-        request.bodyToMono(LikeCommentRequest::class.java)
+        request.bodyToMono(CommentRequest::class.java)
             .flatMap { commentLikeCreateUseCase.like(it.toCommand(), request.memberId()) }
             .map { LikeCommentResponse.from(it) }
             .flatMap(::okWithBody)
 
     fun unlike(request: ServerRequest): Mono<ServerResponse> =
-        commentLikeDeleteUseCase.unlike(request.pathVariable("id").toLong(), request.memberId())
+        request.bodyToMono(CommentRequest::class.java)
+            .flatMap { commentLikeDeleteUseCase.unlike(it.commentId, request.memberId()) }
             .flatMap { ServerResponse.noContent().build() }
 
-    data class LikeCommentRequest(
+    data class CommentRequest(
         val commentId: Long,
     ) {
         fun toCommand(): CommentLikeCreateUseCase.Command = CommentLikeCreateUseCase.Command(commentId)

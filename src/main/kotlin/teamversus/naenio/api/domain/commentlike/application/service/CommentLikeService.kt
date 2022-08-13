@@ -25,9 +25,9 @@ class CommentLikeService(
             .map { CommentLikeCreateUseCase.Result.of(it) }
 
     @Transactional
-    override fun unlike(id: Long, memberId: Long): Mono<Void> =
-        Mono.just(id)
-            .filterWhen { commentLikeRepository.existsById(it) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 댓글 입니다. id=${id}}")) }
-            .flatMap { commentLikeRepository.deleteById(id) }
+    override fun unlike(commentId: Long, memberId: Long): Mono<Void> =
+        Mono.just(commentId)
+            .filterWhen { commentLikeRepository.existsByMemberIdAndCommentId(memberId, it) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 댓글 입니다. commentId=${commentId}, memberId=${memberId}")) }
+            .flatMap { commentLikeRepository.deleteByMemberIdAndCommentId(memberId, commentId) }
 }

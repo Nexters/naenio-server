@@ -12,6 +12,7 @@ import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.query.result.WebPostDetailQueryResult
 import teamversus.naenio.api.support.okWithBody
+import teamversus.naenio.api.support.pathVariableId
 
 @Component
 class WebPostFetcher(
@@ -22,7 +23,7 @@ class WebPostFetcher(
     private val voteRepository: VoteRepository,
 ) {
     fun findDetailById(request: ServerRequest): Mono<ServerResponse> {
-        val postId = request.pathVariable("id").toLong()
+        val postId = request.pathVariableId()
         return Mono.zip(postRepository.findById(postId), choiceRepository.findAllByPostId(postId).collectList())
             .flatMap {
                 Mono.zip(

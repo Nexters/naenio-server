@@ -7,4 +7,6 @@ interface CommentLikeRepository : ReactiveCrudRepository<CommentLike, Long> {
     fun countByCommentId(commentId: Long): Mono<Long>
 
     fun existsByMemberIdAndCommentId(memberId: Long, commentId: Long): Mono<Boolean>
+
+    fun deleteByMemberIdAndCommentId(memberId: Long, commentId: Long): Mono<Void>
 }
