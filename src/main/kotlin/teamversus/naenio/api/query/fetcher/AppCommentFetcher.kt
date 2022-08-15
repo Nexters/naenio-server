@@ -45,9 +45,9 @@ class AppCommentFetcher(
                                 commentRepository.countByParentIdAndParentType(comment.id, CommentParent.COMMENT)
                             )
                                 .map { tuple ->
-                                    AppPostCommentsQueryResult.Comment(
+                                    AppPostCommentsQueryResult.AppPostComment(
                                         comment.id,
-                                        AppPostCommentsQueryResult.Comment.Author(
+                                        AppPostCommentsQueryResult.AppPostComment.AppPostCommentAuthor(
                                             tuple.t1.id,
                                             tuple.t1.nickname,
                                             tuple.t1.profileImageIndex
@@ -86,7 +86,7 @@ class AppCommentFetcher(
                             .map { tuple ->
                                 AppCommentRepliesQueryResult.CommentReply(
                                     comment.id,
-                                    AppCommentRepliesQueryResult.CommentReply.Author(
+                                    AppCommentRepliesQueryResult.CommentReply.CommentReplyAuthor(
                                         tuple.t1.id,
                                         tuple.t1.nickname,
                                         tuple.t1.profileImageIndex

@@ -36,11 +36,15 @@ class WebPostFetcher(
                     .map { tuple ->
                         WebPostDetailQueryResult(
                             tuple.t1.id,
-                            WebPostDetailQueryResult.Author(tuple.t3.id, tuple.t3.nickname, tuple.t3.profileImageIndex),
+                            WebPostDetailQueryResult.WebPostDetailAuthor(
+                                tuple.t3.id,
+                                tuple.t3.nickname,
+                                tuple.t3.profileImageIndex
+                            ),
                             tuple.t1.title,
                             tuple.t1.content,
                             tuple.t2.map { choice ->
-                                WebPostDetailQueryResult.Choice(
+                                WebPostDetailQueryResult.WebPostDetailChoice(
                                     choice.id,
                                     choice.sequence,
                                     choice.name

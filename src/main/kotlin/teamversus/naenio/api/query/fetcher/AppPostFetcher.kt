@@ -119,7 +119,7 @@ class AppPostFetcher(
                         voteRepository.countByChoiceId(it.id)
                     )
                         .map { tuple ->
-                            AppPostDetailQueryResult.Choice(
+                            AppPostDetailQueryResult.AppPostDetailChoice(
                                 it.id,
                                 it.sequence,
                                 it.name,
@@ -136,7 +136,7 @@ class AppPostFetcher(
             .map {
                 AppPostDetailQueryResult(
                     post.id,
-                    AppPostDetailQueryResult.Author(
+                    AppPostDetailQueryResult.AppPostDetailAuthor(
                         it.t2.id,
                         it.t2.nickname,
                         it.t2.profileImageIndex

@@ -75,6 +75,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppPostDetailQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
@@ -92,6 +93,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppPostDetailQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(
@@ -117,6 +119,7 @@ class QueryRouter(
                             content = [Content(schema = Schema(implementation = AppPostsQueryResult::class))]
                         )
                     ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
             ),
             RouterOperation(

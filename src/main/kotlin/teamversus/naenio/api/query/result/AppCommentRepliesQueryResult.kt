@@ -8,14 +8,14 @@ data class AppCommentRepliesQueryResult(
 ) {
     data class CommentReply(
         val id: Long,
-        val author: Author,
+        val author: CommentReplyAuthor,
         val content: String,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         val createdDatetime: LocalDateTime,
         val likeCount: Long,
         val isLiked: Boolean,
     ) {
-        data class Author(
+        data class CommentReplyAuthor(
             val id: Long,
             val nickname: String?,
             val profileImageIndex: Int?,
