@@ -1,4 +1,4 @@
-package teamversus.naenio.api.domain.feedsort
+package teamversus.naenio.api.query.model
 
 enum class SortType {
     MY_POST,

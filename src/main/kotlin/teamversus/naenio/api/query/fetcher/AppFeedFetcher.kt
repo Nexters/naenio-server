@@ -9,14 +9,15 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
-import teamversus.naenio.api.domain.feedsort.SortType
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
-import teamversus.naenio.api.query.result.AppFeedQueryResult
+import teamversus.naenio.api.query.model.SortType
+import teamversus.naenio.api.query.result.AppPostDetailQueryResult
+import teamversus.naenio.api.query.result.AppPostsQueryResult
 import teamversus.naenio.api.support.lastPostIdInQueryParam
 import teamversus.naenio.api.support.okWithBody
 import teamversus.naenio.api.support.pageableOfSizeInQueryParam
@@ -40,7 +41,7 @@ class AppFeedFetcher(
                                 voteRepository.countByChoiceId(it.id)
                             )
                                 .map { tuple ->
-                                    AppFeedQueryResult.Post.Choice(
+                                    AppPostDetailQueryResult.Choice(
                                         it.id,
                                         it.sequence,
                                         it.name,
@@ -55,9 +56,9 @@ class AppFeedFetcher(
                     commentRepository.countByParentIdAndParentType(post.id, CommentParent.POST)
                 )
                     .map {
-                        AppFeedQueryResult.Post(
+                        AppPostDetailQueryResult(
                             post.id,
-                            AppFeedQueryResult.Post.Author(
+                            AppPostDetailQueryResult.Author(
                                 it.t2.id,
                                 it.t2.nickname,
                                 it.t2.profileImageIndex
@@ -70,6 +71,7 @@ class AppFeedFetcher(
                     }
             }
             .collectList()
+            .map { AppPostsQueryResult(it) }
             .flatMap { okWithBody(it) }
 
     private fun findPosts(request: ServerRequest): Flux<Post> {

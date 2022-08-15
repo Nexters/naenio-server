@@ -95,6 +95,31 @@ class QueryRouter(
                 )
             ),
             RouterOperation(
+                path = "/app/posts",
+                method = [RequestMethod.GET],
+                beanClass = AppPostFetcher::class,
+                beanMethod = "findAllByTheme",
+                operation = Operation(
+                    tags = ["게시글"],
+                    summary = "게시글 테마별 조회",
+                    operationId = "findAllByTheme",
+                    parameters = [
+                        Parameter(
+                            name = "theme",
+                            `in` = ParameterIn.QUERY,
+                            required = true,
+                            description = "랜덤 조회의 경우 /app/posts/random 사용"
+                        )
+                    ],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppPostsQueryResult::class))]
+                        )
+                    ],
+                )
+            ),
+            RouterOperation(
                 path = "/app/feed",
                 method = [RequestMethod.GET],
                 beanClass = AppFeedFetcher::class,
@@ -125,7 +150,7 @@ class QueryRouter(
                     responses = [
                         ApiResponse(
                             responseCode = "200",
-                            content = [Content(schema = Schema(implementation = AppFeedQueryResult::class))]
+                            content = [Content(schema = Schema(implementation = AppPostsQueryResult::class))]
                         )
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
@@ -266,6 +291,7 @@ class QueryRouter(
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
             GET("/app/posts/{id}", appPostFetcher::findDetailById)
             GET("/app/posts/random", appPostFetcher::findDetailByRandom)
+            GET("/app/posts", appPostFetcher::findAllByTheme)
             GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)

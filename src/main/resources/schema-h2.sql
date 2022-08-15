@@ -69,3 +69,39 @@ CREATE TABLE IF NOT EXISTS comment_like
     last_modified_date_time DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS post_choice_vote_count
+(
+    id                  BIGINT NOT NULL AUTO_INCREMENT,
+    post_id             BIGINT NOT NULL,
+    first_choice_count  BIGINT NOT NULL,
+    second_choice_count BIGINT NOT NULL,
+    total_count         BIGINT NOT NULL,
+    rate                DOUBLE NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS post_comment_count
+(
+    id            BIGINT NOT NULL AUTO_INCREMENT,
+    post_id       BIGINT NOT NULL,
+    comment_count BIGINT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS post_vote_by_day
+(
+    id             BIGINT NOT NULL AUTO_INCREMENT,
+    post_id        BIGINT NOT NULL,
+    aggregate_date DATE   NOT NULL,
+    count          BIGINT NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS post_vote_count
+(
+    id      BIGINT NOT NULL AUTO_INCREMENT,
+    post_id BIGINT NOT NULL,
+    count   BIGINT NOT NULL,
+    PRIMARY KEY (id)
+);

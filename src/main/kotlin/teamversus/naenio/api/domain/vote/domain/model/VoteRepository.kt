@@ -19,4 +19,6 @@ interface VoteRepository : ReactiveCrudRepository<Vote, Long> {
         lastModifiedDateTime: LocalDateTime,
         pageable: Pageable,
     ): Flux<Vote>
+
+    fun findAllByLastModifiedDateTimeBetween(from: LocalDateTime, to: LocalDateTime): Flux<Vote>
 }

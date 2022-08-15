@@ -1,11 +1,13 @@
 package teamversus.naenio.api.domain.comment.application.service
 
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.comment.application.CommentCreateUseCase
 import teamversus.naenio.api.domain.comment.application.CommentDeleteUseCase
+import teamversus.naenio.api.domain.comment.domain.event.CommentCreatedEvent
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
@@ -14,12 +16,28 @@ import teamversus.naenio.api.domain.post.domain.model.PostRepository
 class CommentService(
     private val commentRepository: CommentRepository,
     private val postRepository: PostRepository,
+    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : CommentCreateUseCase, CommentDeleteUseCase {
     override fun create(command: CommentCreateUseCase.Command, memberId: Long): Mono<CommentCreateUseCase.Result> =
         Mono.just(command)
             .filterWhen(::isParentCommentable)
             .switchIfEmpty { Mono.error(IllegalArgumentException("부모 엔티티가 존재하지 않거나 대댓글에 댓글 생성을 시도하였습니다. parentId=${command.parentId}, parentType=${command.parentType}")) }
-            .flatMap { commentRepository.save(command.toDomain(memberId)) }
+            .flatMap {
+                commentRepository.save(command.toDomain(memberId))
+                    .doOnSuccess {
+                        applicationEventPublisher.publishEvent(
+                            CommentCreatedEvent(
+                                it.id,
+                                it.memberId,
+                                it.parentId,
+                                it.parentType,
+                                it.content,
+                                it.createdDateTime,
+                                it.lastModifiedDateTime
+                            )
+                        )
+                    }
+            }
             .map { CommentCreateUseCase.Result.of(it) }
 
     private fun isParentCommentable(it: CommentCreateUseCase.Command): Mono<Boolean> {
