@@ -26,6 +26,13 @@ data class PostChoiceVoteCount(
     fun increaseFirst(): PostChoiceVoteCount =
         PostChoiceVoteCount(id, postId, firstChoiceCount + 1, secondChoiceCount)
 
+
     fun increaseSecond(): PostChoiceVoteCount =
         PostChoiceVoteCount(id, postId, firstChoiceCount, secondChoiceCount + 1)
+
+    fun moveToFirst(): PostChoiceVoteCount =
+        PostChoiceVoteCount(id, postId, firstChoiceCount + 1, secondChoiceCount - 1)
+
+    fun moveToSecond(): PostChoiceVoteCount =
+        PostChoiceVoteCount(id, postId, firstChoiceCount - 1, secondChoiceCount + 1)
 }

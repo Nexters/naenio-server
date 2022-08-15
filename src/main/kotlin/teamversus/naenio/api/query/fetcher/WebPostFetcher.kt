@@ -5,11 +5,10 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
-import teamversus.naenio.api.domain.comment.domain.model.CommentParent
-import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
-import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
+import teamversus.naenio.api.query.model.PostCommentCountRepository
+import teamversus.naenio.api.query.model.PostVoteCountRepository
 import teamversus.naenio.api.query.result.WebPostDetailQueryResult
 import teamversus.naenio.api.support.okWithBody
 import teamversus.naenio.api.support.pathVariableId
@@ -19,8 +18,8 @@ class WebPostFetcher(
     private val postRepository: PostRepository,
     private val choiceRepository: ChoiceRepository,
     private val memberRepository: MemberRepository,
-    private val commentRepository: CommentRepository,
-    private val voteRepository: VoteRepository,
+    private val postCommentCountRepository: PostCommentCountRepository,
+    private val postVoteCountRepository: PostVoteCountRepository,
 ) {
     fun findDetailById(request: ServerRequest): Mono<ServerResponse> {
         val postId = request.pathVariableId()
@@ -30,8 +29,8 @@ class WebPostFetcher(
                     Mono.just(it.t1),
                     Mono.just(it.t2),
                     memberRepository.findById(it.t1.memberId),
-                    commentRepository.countByParentIdAndParentType(it.t1.id, CommentParent.POST),
-                    voteRepository.countByChoiceIdIn(it.t2.map { choice -> choice.id })
+                    postCommentCountRepository.findByPostId(it.t1.id),
+                    postVoteCountRepository.findByPostId(it.t1.id)
                 )
                     .map { tuple ->
                         WebPostDetailQueryResult(
@@ -50,8 +49,8 @@ class WebPostFetcher(
                                     choice.name
                                 )
                             },
-                            tuple.t4,
-                            tuple.t5,
+                            tuple.t4.commentCount.toLong(),
+                            tuple.t5.count,
                         )
                     }
                     .flatMap(::okWithBody)

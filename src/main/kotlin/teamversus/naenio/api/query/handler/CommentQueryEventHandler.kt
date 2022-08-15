@@ -1,7 +1,6 @@
-package teamversus.naenio.api.query.listener
+package teamversus.naenio.api.query.handler
 
 import org.springframework.stereotype.Component
-import org.springframework.transaction.event.TransactionalEventListener
 import reactor.core.publisher.Mono
 import teamversus.naenio.api.domain.comment.domain.event.CommentCreatedEvent
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
@@ -9,10 +8,9 @@ import teamversus.naenio.api.query.model.PostCommentCount
 import teamversus.naenio.api.query.model.PostCommentCountRepository
 
 @Component
-class CommentCreatedEventListener(
+class CommentQueryEventHandler(
     private val postCommentCountRepository: PostCommentCountRepository,
 ) {
-    @TransactionalEventListener
     fun handle(event: CommentCreatedEvent) {
         if (event.parentType != CommentParent.POST) {
             return

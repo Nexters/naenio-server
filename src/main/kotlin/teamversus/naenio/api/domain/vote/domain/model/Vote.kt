@@ -19,5 +19,7 @@ data class Vote(
     fun withId(id: Long): Vote = Vote(id, memberId, postId, choiceId)
 
     fun changeChoice(choiceId: Long, memberId: Long) =
-        Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime)
+        require(this.choiceId != choiceId) { "동일한 choiceId. choiceId=${choiceId}" }
+            .run { Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime) }
+
 }

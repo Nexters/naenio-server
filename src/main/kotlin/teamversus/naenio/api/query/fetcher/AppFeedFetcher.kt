@@ -7,14 +7,13 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
-import teamversus.naenio.api.domain.comment.domain.model.CommentParent
-import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
+import teamversus.naenio.api.query.model.PostCommentCountRepository
 import teamversus.naenio.api.query.model.SortType
 import teamversus.naenio.api.query.result.AppPostDetailQueryResult
 import teamversus.naenio.api.query.result.AppPostsQueryResult
@@ -28,7 +27,7 @@ class AppFeedFetcher(
     private val choiceRepository: ChoiceRepository,
     private val memberRepository: MemberRepository,
     private val voteRepository: VoteRepository,
-    private val commentRepository: CommentRepository,
+    private val postCommentCountRepository: PostCommentCountRepository,
 ) {
     fun findFeed(request: ServerRequest): Mono<ServerResponse> =
         findPosts(request)
@@ -53,7 +52,7 @@ class AppFeedFetcher(
                         .collectList(),
                     memberRepository.findById(post.memberId)
                         .switchIfEmpty { Mono.just(Member.withdrawMember()) },
-                    commentRepository.countByParentIdAndParentType(post.id, CommentParent.POST)
+                    postCommentCountRepository.findByPostId(post.id)
                 )
                     .map {
                         AppPostDetailQueryResult(
@@ -66,7 +65,7 @@ class AppFeedFetcher(
                             post.title,
                             post.content,
                             it.t1,
-                            it.t3
+                            it.t3.commentCount.toLong()
                         )
                     }
             }

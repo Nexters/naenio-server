@@ -1,6 +1,5 @@
 package teamversus.naenio.api.domain.comment.application.service
 
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Mono
@@ -11,12 +10,13 @@ import teamversus.naenio.api.domain.comment.domain.event.CommentCreatedEvent
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
+import teamversus.naenio.api.query.handler.CommentQueryEventHandler
 
 @Service
 class CommentService(
     private val commentRepository: CommentRepository,
     private val postRepository: PostRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val commentQueryEventHandler: CommentQueryEventHandler,
 ) : CommentCreateUseCase, CommentDeleteUseCase {
     override fun create(command: CommentCreateUseCase.Command, memberId: Long): Mono<CommentCreateUseCase.Result> =
         Mono.just(command)
@@ -25,7 +25,7 @@ class CommentService(
             .flatMap {
                 commentRepository.save(command.toDomain(memberId))
                     .doOnSuccess {
-                        applicationEventPublisher.publishEvent(
+                        commentQueryEventHandler.handle(
                             CommentCreatedEvent(
                                 it.id,
                                 it.memberId,
