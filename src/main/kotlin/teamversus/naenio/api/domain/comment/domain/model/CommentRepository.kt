@@ -18,4 +18,11 @@ interface CommentRepository : ReactiveCrudRepository<Comment, Long> {
         parentType: CommentParent,
         pageable: Pageable,
     ): Flux<Comment>
+
+    fun findAllByIdLessThanAndMemberIdAndParentTypeOrderByIdDesc(
+        id: Long,
+        memberId: Long,
+        parentType: CommentParent,
+        pageable: Pageable,
+    ): Flux<Comment>
 }

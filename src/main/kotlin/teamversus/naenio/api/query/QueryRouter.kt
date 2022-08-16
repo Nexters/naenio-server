@@ -234,6 +234,37 @@ class QueryRouter(
                 )
             ),
             RouterOperation(
+                path = "/app/comments/me",
+                method = [RequestMethod.GET],
+                beanClass = AppCommentFetcher::class,
+                beanMethod = "findAllByMe",
+                operation = Operation(
+                    tags = ["댓글"],
+                    summary = "내가 작성한 댓글 조회",
+                    operationId = "findCommentsByMe",
+                    parameters = [
+                        Parameter(
+                            name = "size",
+                            `in` = ParameterIn.QUERY,
+                            required = true
+                        ),
+                        Parameter(
+                            name = "lastCommentId",
+                            `in` = ParameterIn.QUERY,
+                            required = false,
+                            description = "첫 조회, 새로고침의 경우 lastCommentId를 비워서 보내면 됩니다."
+                        ),
+                    ],
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppPostCommentsOfMeQueryResult::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
+            ),
+            RouterOperation(
                 path = "/app/members/me",
                 method = [RequestMethod.GET],
                 beanClass = AppMemberFetcher::class,
@@ -292,15 +323,16 @@ class QueryRouter(
     fun queryRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
+            GET("/app/posts", appPostFetcher::findAllByTheme)
             GET("/app/posts/{id}", appPostFetcher::findDetailById)
             GET("/app/posts/random", appPostFetcher::findDetailByRandom)
-            GET("/app/posts", appPostFetcher::findAllByTheme)
+            GET("/app/posts/{id}/comments", appCommentFetcher::findPostComments)
+            GET("/app/feed", appFeedFetcher::findFeed)
             GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)
+            GET("/app/comments/me", appCommentFetcher::findAllByMe)
+            GET("/app/comments/{id}/comment-replies", appCommentFetcher::findCommentReplies)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
-            GET("/app/feed", appFeedFetcher::findFeed)
-            GET("/app/posts/{id}/comments", appCommentFetcher::findPostComments)
-            GET("/app/comments/{id}/comment-replies", appCommentFetcher::findCommentReplies)
         }
     }
 }

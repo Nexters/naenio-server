@@ -11,6 +11,7 @@ import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.filter.memberId
 import teamversus.naenio.api.query.result.AppCommentRepliesQueryResult
+import teamversus.naenio.api.query.result.AppPostCommentsOfMeQueryResult
 import teamversus.naenio.api.query.result.AppPostCommentsQueryResult
 import teamversus.naenio.api.support.lastCommentIdInQueryParam
 import teamversus.naenio.api.support.okWithBody
@@ -104,4 +105,35 @@ class AppCommentFetcher(
             .flatMap { okWithBody(it) }
 
 
+    fun findAllByMe(request: ServerRequest): Mono<ServerResponse> =
+        commentRepository.findAllByIdLessThanAndMemberIdAndParentTypeOrderByIdDesc(
+            request.lastCommentIdInQueryParam(),
+            request.memberId(),
+            CommentParent.POST,
+            request.pageableOfSizeInQueryParam()
+        )
+            .flatMap { comment ->
+                postRepository.findById(comment.parentId)
+                    .flatMap { post ->
+                        memberRepository.findById(post.memberId)
+                            .map { author ->
+                                AppPostCommentsOfMeQueryResult.AppPostCommentsOfMe(
+                                    comment.id,
+                                    comment.content,
+                                    AppPostCommentsOfMeQueryResult.AppPostCommentsOfMe.AppPostCommentsOfMePost(
+                                        post.id,
+                                        AppPostCommentsOfMeQueryResult.AppPostCommentsOfMe.AppPostCommentsOfMePost.AppPostCommentsOfMePostAuthor(
+                                            author.id,
+                                            author.nickname,
+                                            author.profileImageIndex
+                                        ),
+                                        post.title
+                                    )
+                                )
+                            }
+                    }
+            }
+            .collectList()
+            .map { AppPostCommentsOfMeQueryResult(it) }
+            .flatMap { okWithBody(it) }
 }
