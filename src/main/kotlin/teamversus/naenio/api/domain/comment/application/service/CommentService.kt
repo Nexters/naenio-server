@@ -18,10 +18,12 @@ class CommentService(
     private val postRepository: PostRepository,
     private val commentQueryEventHandler: CommentQueryEventHandler,
 ) : CommentCreateUseCase, CommentDeleteUseCase {
-    override fun create(command: CommentCreateUseCase.Command, memberId: Long): Mono<CommentCreateUseCase.Result> =
-        Mono.just(command)
+    override fun create(command: CommentCreateUseCase.Command, memberId: Long): Mono<CommentCreateUseCase.Result> {
+        require(command.content.length <= 200) { "댓글은 최대 200자 입니다." }
+
+        return Mono.just(command)
             .filterWhen(::isParentCommentable)
-            .switchIfEmpty { Mono.error(IllegalArgumentException("부모 엔티티가 존재하지 않거나 대댓글에 댓글 생성을 시도하였습니다. parentId=${command.parentId}, parentType=${command.parentType}")) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("이미 삭제된 글입니다.")) }
             .flatMap {
                 commentRepository.save(command.toDomain(memberId))
                     .doOnSuccess {
@@ -39,6 +41,8 @@ class CommentService(
                     }
             }
             .map { CommentCreateUseCase.Result.of(it) }
+    }
+
 
     private fun isParentCommentable(it: CommentCreateUseCase.Command): Mono<Boolean> {
         if (it.parentType == CommentParent.POST) {
@@ -52,9 +56,9 @@ class CommentService(
 
 
     @Transactional
-    override fun delete(id: Long): Mono<Void> =
+    override fun delete(id: Long, memberId: Long): Mono<Void> =
         Mono.just(id)
-            .filterWhen { commentRepository.existsById(it) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 댓글 입니다. id=${id}}")) }
+            .filterWhen { commentRepository.existsByIdAndMemberId(it, memberId) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("이미 삭제된 댓글입니다.")) }
             .flatMap { commentRepository.deleteById(id) }
 }

@@ -18,8 +18,8 @@ data class Vote(
 ) {
     fun withId(id: Long): Vote = Vote(id, memberId, postId, choiceId)
 
-    fun changeChoice(choiceId: Long, memberId: Long) =
-        require(this.choiceId != choiceId) { "동일한 choiceId. choiceId=${choiceId}" }
-            .run { Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime) }
-
+    fun changeChoice(choiceId: Long, memberId: Long): Vote {
+        require(this.choiceId == choiceId) { "같은 선택지에 투표할 수 없습니다." }
+        return Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime)
+    }
 }

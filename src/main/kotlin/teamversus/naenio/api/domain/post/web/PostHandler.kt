@@ -23,7 +23,7 @@ class PostHandler(
             .flatMap(::okWithBody)
 
     fun delete(request: ServerRequest): Mono<ServerResponse> =
-        postDeleteUseCase.deleteById(request.pathVariable("id").toLong())
+        postDeleteUseCase.deleteById(request.pathVariable("id").toLong(), request.memberId())
             .flatMap { ServerResponse.noContent().build() }
 
     data class CreatePostRequest(

@@ -24,7 +24,7 @@ class CommentHandler(
             .flatMap(::okWithBody)
 
     fun delete(request: ServerRequest): Mono<ServerResponse> =
-        commentDeleteUseCase.delete(request.pathVariable("id").toLong())
+        commentDeleteUseCase.delete(request.pathVariable("id").toLong(), request.memberId())
             .flatMap { ServerResponse.noContent().build() }
 
 

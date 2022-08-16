@@ -11,12 +11,14 @@ import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
 @Service
 class ChoiceService(private val choiceRepository: ChoiceRepository) :
     ChoiceCreateUseCase, ChoiceDeleteUseCase {
-    override fun create(commands: List<ChoiceCreateUseCase.Command>): Flux<ChoiceCreateUseCase.Result> =
-        require(commands.size == 2) { "선택지의 숫자는 두개여야 합니다." }
-            .run {
-                choiceRepository.saveAll(commands.map { it.toDomain() })
-                    .map { ChoiceCreateUseCase.Result(it.id, it.postId, it.sequence, it.name) }
-            }
+    override fun create(commands: List<ChoiceCreateUseCase.Command>): Flux<ChoiceCreateUseCase.Result> {
+        require(commands.size == 2) { "선택지는 두개이어야 합니다." }
+        require(commands.all { it.name.length <= 32 }) { "선택지는 최대 32자 입니다." }
+
+        return choiceRepository.saveAll(commands.map { it.toDomain() })
+            .map { ChoiceCreateUseCase.Result(it.id, it.postId, it.sequence, it.name) }
+
+    }
 
     @Transactional
     override fun deleteAllByPostId(id: Long): Mono<Void> =

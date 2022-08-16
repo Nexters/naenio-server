@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
 
 interface CommentRepository : ReactiveCrudRepository<Comment, Long> {
     fun existsByIdAndParentType(id: Long, parentType: CommentParent): Mono<Boolean>
+    fun existsByIdAndMemberId(id: Long, memberId: Long): Mono<Boolean>
 
     fun countByParentIdAndParentType(parentId: Long, parentType: CommentParent): Mono<Long>
 

@@ -18,8 +18,11 @@ class PostService(
 ) : PostCreateUseCase, PostDeleteUseCase {
 
     @Transactional
-    override fun create(command: PostCreateUseCase.Command, memberId: Long): Mono<PostCreateUseCase.Result> =
-        postRepository.save(command.toPost(memberId))
+    override fun create(command: PostCreateUseCase.Command, memberId: Long): Mono<PostCreateUseCase.Result> {
+        require(command.title.length <= 70) { "제목은 최대 70자 입니다." }
+        require(command.content.length <= 99) { "내용은 최대 99자 입니다." }
+
+        return postRepository.save(command.toPost(memberId))
             .flatMap { post ->
                 choiceCreateUseCase.create(command.toChoiceCreateCommands(post.id))
                     .collectList()
@@ -29,18 +32,27 @@ class PostService(
                             post.memberId,
                             post.title,
                             post.content,
-                            choices.map { PostCreateUseCase.Result.Choice(it.id, it.postId, it.sequence, it.name) },
+                            choices.map {
+                                PostCreateUseCase.Result.Choice(
+                                    it.id,
+                                    it.postId,
+                                    it.sequence,
+                                    it.name
+                                )
+                            },
                             post.createdDateTime,
                             post.lastModifiedDateTime
                         )
                     }
             }
+    }
+
 
     @Transactional
-    override fun deleteById(id: Long): Mono<Void> =
+    override fun deleteById(id: Long, memberId: Long): Mono<Void> =
         Mono.just(id)
-            .filterWhen { postRepository.existsById(it) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 게시글 입니다. id=${id}}")) }
+            .filterWhen { postRepository.existsByIdAndMemberId(it, memberId) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("이미 삭제된 게시글 입니다.")) }
             .flatMap { choiceDeleteUseCase.deleteAllByPostId(id) }
             .flatMap { postRepository.deleteById(id) }
 }

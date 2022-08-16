@@ -27,7 +27,7 @@ class AppCommentFetcher(
     fun findPostComments(request: ServerRequest): Mono<ServerResponse> =
         Mono.just(request.pathVariableId())
             .filterWhen { postRepository.existsById(it) }
-            .switchIfEmpty(Mono.error(IllegalArgumentException("게시글이 존재하지 않습니다. postId=${request.pathVariableId()}")))
+            .switchIfEmpty(Mono.error(IllegalArgumentException("삭제된 게시글 입니다.")))
             .flatMap {
                 Mono.zip(
                     commentRepository.countByParentIdAndParentType(it, CommentParent.POST),
@@ -69,7 +69,7 @@ class AppCommentFetcher(
     fun findCommentReplies(request: ServerRequest): Mono<ServerResponse> =
         Mono.just(request.pathVariableId())
             .filterWhen { commentRepository.existsById(it) }
-            .switchIfEmpty(Mono.error(IllegalArgumentException("댓글이 존재하지 않습니다. commentId=${request.pathVariableId()}")))
+            .switchIfEmpty(Mono.error(IllegalArgumentException("삭제된 댓글 입니다.")))
             .flatMap {
                 commentRepository.findAllByIdLessThanAndParentIdAndParentTypeOrderByIdDesc(
                     request.lastCommentIdInQueryParam(),

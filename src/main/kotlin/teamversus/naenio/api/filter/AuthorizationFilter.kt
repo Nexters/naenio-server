@@ -39,7 +39,7 @@ class AuthorizationFilter(
 
             return Mono.just(memberId)
                 .filterWhen { memberRepository.existsById(it) }
-                .switchIfEmpty { Mono.error(IllegalArgumentException("id와 일치하는 회원이 존재하지 않습니다. id=${memberId}")) }
+                .switchIfEmpty { Mono.error(IllegalArgumentException("일시적으로 연결 상태가 불안정하여 요청을 처리할 수 없습니다. 관리자에게 문의 해주세요.")) }
                 .flatMap {
                     exchange.attributes[MEMBER_ID_ATTRIBUTE] = it
                     chain.filter(exchange)

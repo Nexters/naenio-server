@@ -44,23 +44,26 @@ class MemberService(
         externalMemberLoadPorts.find { it.support(authServiceType) }
             ?: throw IllegalArgumentException("미지원 타입. AuthServiceType=${authServiceType}")
 
-    override fun setNickname(nickname: String, memberId: Long): Mono<MemberSetNicknameUseCase.Response> =
-        memberRepository.findById(memberId)
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 memberId=${memberId}")) }
+    override fun setNickname(nickname: String, memberId: Long): Mono<MemberSetNicknameUseCase.Response> {
+        require(nickname.length <= 10) { "닉네임은 최대 10자 입니다." }
+
+        return memberRepository.findById(memberId)
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다.")) }
             .map { it.changeNickname(nickname) }
             .flatMap {
                 memberRepository.save(it)
-                    // TODO: 2022/07/26 에러 코드 나눠야함
-                    .onErrorMap(this::isDuplicateEntryError) { IllegalArgumentException("중복된 닉네임") }
+                    .onErrorMap(::isDuplicateEntryError) { IllegalArgumentException("이미 존재하는 닉네임 입니다.") }
             }
             .map { MemberSetNicknameUseCase.Response(it.nickname!!) }
+    }
+
 
     override fun setProfileImageIndex(
         profileImageIndex: Int,
         memberId: Long,
     ): Mono<MemberSetProfileImageUseCase.Response> =
         memberRepository.findById(memberId)
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 memberId=${memberId}")) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다.")) }
             .map { it.changeProfileImage(profileImageIndex) }
             .flatMap { memberRepository.save(it) }
             .map { MemberSetProfileImageUseCase.Response(it.profileImageIndex!!) }
@@ -76,6 +79,6 @@ class MemberService(
     override fun withdraw(id: Long): Mono<Void> =
         Mono.just(id)
             .filterWhen { memberRepository.existsById(it) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다. id=${id}}")) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다.")) }
             .flatMap { memberRepository.deleteById(id) }
 }

@@ -20,14 +20,14 @@ class CommentLikeService(
     ): Mono<CommentLikeCreateUseCase.Result> =
         Mono.just(command)
             .filterWhen { commentRepository.existsById(it.commentId) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("댓글이 존재하지 않습니다. commentId=${command.commentId}")) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("삭제된 댓글입니다.")) }
             .flatMap { commentLikeRepository.save(command.toDomain(memberId)) }
             .map { CommentLikeCreateUseCase.Result.of(it) }
 
     @Transactional
-    override fun unlike(commentId: Long, memberId: Long): Mono<Void> =
-        Mono.just(commentId)
+    override fun unlike(id: Long, memberId: Long): Mono<Void> =
+        Mono.just(id)
             .filterWhen { commentLikeRepository.existsByMemberIdAndCommentId(memberId, it) }
-            .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 댓글 입니다. commentId=${commentId}, memberId=${memberId}")) }
-            .flatMap { commentLikeRepository.deleteByMemberIdAndCommentId(memberId, commentId) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("일시적으로 연결 상태가 불안정하여 요청을 처리할 수 없습니다. 관리자에게 문의 해주세요.")) }
+            .flatMap { commentLikeRepository.deleteByMemberIdAndCommentId(memberId, id) }
 }
