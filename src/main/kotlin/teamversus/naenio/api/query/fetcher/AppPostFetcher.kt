@@ -7,7 +7,6 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
-import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.Post
@@ -27,7 +26,6 @@ class AppPostFetcher(
     private val postRepository: PostRepository,
     private val choiceRepository: ChoiceRepository,
     private val memberRepository: MemberRepository,
-    private val commentRepository: CommentRepository,
     private val voteRepository: VoteRepository,
     private val postVoteByDayRepository: PostVoteByDayRepository,
     private val postVoteCountRepository: PostVoteCountRepository,
@@ -131,6 +129,7 @@ class AppPostFetcher(
             memberRepository.findById(post.memberId)
                 .switchIfEmpty { Mono.just(Member.withdrawMember()) },
             postCommentCountRepository.findByPostId(post.id)
+                .switchIfEmpty(Mono.just(PostCommentCount(0, post.id, 0))),
         )
             .map {
                 AppPostDetailQueryResult(

@@ -13,6 +13,7 @@ import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.domain.model.VoteRepository
 import teamversus.naenio.api.filter.memberId
+import teamversus.naenio.api.query.model.PostCommentCount
 import teamversus.naenio.api.query.model.PostCommentCountRepository
 import teamversus.naenio.api.query.model.SortType
 import teamversus.naenio.api.query.result.AppPostDetailQueryResult
@@ -53,6 +54,7 @@ class AppFeedFetcher(
                     memberRepository.findById(post.memberId)
                         .switchIfEmpty { Mono.just(Member.withdrawMember()) },
                     postCommentCountRepository.findByPostId(post.id)
+                        .switchIfEmpty(Mono.just(PostCommentCount(0, post.id, 0))),
                 )
                     .map {
                         AppPostDetailQueryResult(
