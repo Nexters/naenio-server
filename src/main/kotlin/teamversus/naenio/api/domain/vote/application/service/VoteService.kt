@@ -16,7 +16,6 @@ class VoteService(
 ) : VoteCastUseCase {
     override fun cast(command: VoteCastUseCase.Command, memberId: Long): Mono<VoteCastUseCase.Result> =
         voteRepository.findByPostIdAndMemberId(command.postId, memberId)
-            .switchIfEmpty(Mono.error(IllegalArgumentException("투표가 존재하지 않습니다.")))
             .map { it.changeChoice(command.choiceId, memberId) }
             .flatMap {
                 voteRepository.save(it)
