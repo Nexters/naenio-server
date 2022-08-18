@@ -79,7 +79,7 @@ class QueryRouter(
                 )
             ),
             RouterOperation(
-                path = "/app/posts/random",
+                path = "/app/posts-random",
                 method = [RequestMethod.GET],
                 beanClass = AppPostFetcher::class,
                 beanMethod = "findDetailByRandom",
@@ -325,7 +325,7 @@ class QueryRouter(
             GET("/web/posts/{id}", webPostFetcher::findDetailById)
             GET("/app/posts", appPostFetcher::findAllByTheme)
             GET("/app/posts/{id}", appPostFetcher::findDetailById)
-            GET("/app/posts/random", appPostFetcher::findDetailByRandom)
+            GET("/app/posts-random", appPostFetcher::findDetailByRandom)
             GET("/app/posts/{id}/comments", appCommentFetcher::findPostComments)
             GET("/app/feed", appFeedFetcher::findFeed)
             GET("/app/feed/sort-types", appFeedSortTypeFetcher::findAll)

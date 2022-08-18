@@ -75,7 +75,7 @@ class CommentLikeRouter(private val commentLikeHandler: CommentLikeHandler) {
     fun commentLikeRouterFunction(): RouterFunction<ServerResponse> = router {
         accept(MediaType.APPLICATION_JSON).nest {
             POST("/app/comment-likes", commentLikeHandler::like)
-            DELETE("/app/comment-likes/{id}", commentLikeHandler::unlike)
+            DELETE("/app/comment-likes", commentLikeHandler::unlike)
         }
     }
 }
