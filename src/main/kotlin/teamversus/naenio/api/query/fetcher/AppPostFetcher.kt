@@ -99,10 +99,10 @@ class AppPostFetcher(
 
     fun findDetailByRandom(request: ServerRequest): Mono<ServerResponse> =
         postRepository.count()
-            .flatMap { postRepository.findById(Random.nextLong(1, it + 1)) }
+            .flatMap { postRepository.findById(Random.nextLong(65, it + 65)) }
             .repeatWhenEmpty(10) {
                 postRepository.count()
-                    .flatMap { postRepository.findById(Random.nextLong(1, it + 1)) }
+                    .flatMap { postRepository.findById(Random.nextLong(65, it + 65)) }
             }
             .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
