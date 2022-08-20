@@ -21,6 +21,7 @@ import teamversus.naenio.api.query.result.AppPostsQueryResult
 import teamversus.naenio.api.support.lastPostIdInQueryParam
 import teamversus.naenio.api.support.okWithBody
 import teamversus.naenio.api.support.pageableOfSizeInQueryParam
+import java.time.LocalDateTime
 
 @Component
 class AppFeedFetcher(
@@ -92,6 +93,20 @@ class AppFeedFetcher(
             )
         }
         if (sortType.get() == SortType.VOTED_BY_ME.name) {
+            if (request.lastPostIdInQueryParam() == Long.MAX_VALUE) {
+                return voteRepository.findByMemberIdAndLastModifiedDateTimeBeforeOrderByLastModifiedDateTimeDesc(
+                    request.memberId(),
+                    LocalDateTime.now(),
+                    request.pageableOfSizeInQueryParam()
+                )
+                    .map { it.postId }
+                    .collectList()
+                    .flatMap {
+                        postRepository.findAllById(it).collectList()
+                    }
+                    .flatMapIterable { it }
+            }
+
             return voteRepository.findByPostIdAndMemberId(request.lastPostIdInQueryParam(), request.memberId())
                 .map { it.lastModifiedDateTime }
                 .flatMap { lastModifiedDateTime ->
