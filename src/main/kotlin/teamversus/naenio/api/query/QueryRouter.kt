@@ -29,6 +29,7 @@ class QueryRouter(
     private val appMemberFetcher: AppMemberFetcher,
     private val appFeedFetcher: AppFeedFetcher,
     private val appCommentFetcher: AppCommentFetcher,
+    private val appNoticeFetcher: AppNoticeFetcher,
 ) {
     @Bean
     @RouterOperations(
@@ -317,6 +318,24 @@ class QueryRouter(
                     ],
                     security = [SecurityRequirement(name = "Bearer Authentication")]
                 )
+            ),
+            RouterOperation(
+                path = "/app/notices",
+                method = [RequestMethod.GET],
+                beanClass = AppNoticeFetcher::class,
+                beanMethod = "findAll",
+                operation = Operation(
+                    tags = ["공지사항"],
+                    summary = "공지사항 목록 조회",
+                    operationId = "findAllNotice",
+                    responses = [
+                        ApiResponse(
+                            responseCode = "200",
+                            content = [Content(schema = Schema(implementation = AppNoticesQueryResult::class))]
+                        )
+                    ],
+                    security = [SecurityRequirement(name = "Bearer Authentication")]
+                )
             )
         ]
     )
@@ -333,6 +352,7 @@ class QueryRouter(
             GET("/app/comments/{id}/comment-replies", appCommentFetcher::findCommentReplies)
             GET("/app/members/me", appMemberFetcher::findMe)
             GET("/app/themes", appThemeFetcher::findAll)
+            GET("/app/notices", appNoticeFetcher::findAll)
         }
     }
 }
