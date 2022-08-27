@@ -10,5 +10,8 @@ data class ErrorResponse(
 
         fun error(message: String?): ErrorResponse =
             ErrorResponse("ERROR", message ?: "서버 오류")
+
+        fun unauthorized(message: String?): ErrorResponse =
+            ErrorResponse("FAIL", message ?: "인증에 실패하였습니다.")
     }
 }

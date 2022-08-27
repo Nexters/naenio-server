@@ -8,11 +8,20 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import reactor.core.publisher.Mono
+import teamversus.naenio.api.domain.member.application.service.TokenException
 
 @Order(-2)
 @Component
 class GlobalExceptionHandler : ErrorWebExceptionHandler {
     override fun handle(exchange: ServerWebExchange, ex: Throwable): Mono<Void> {
+        if (ex is TokenException) {
+            return exchange.response.writeWith(Mono.fromSupplier {
+                val bufferFactory = exchange.response.bufferFactory()
+                exchange.response.statusCode = HttpStatus.UNAUTHORIZED
+                return@fromSupplier bufferFactory.wrap(objectMapper.writeValueAsBytes(ErrorResponse.unauthorized(ex.message)))
+            })
+        }
+
         if (ex is IllegalArgumentException) {
             log.warn("bad request", ex)
             return exchange.response.writeWith(Mono.fromSupplier {

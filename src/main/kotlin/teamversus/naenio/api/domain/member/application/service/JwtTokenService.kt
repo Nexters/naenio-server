@@ -3,6 +3,7 @@ package teamversus.naenio.api.domain.member.application.service
 import io.jsonwebtoken.Header
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import teamversus.naenio.api.domain.member.application.JwtTokenUseCase
@@ -30,9 +31,19 @@ class JwtTokenService(@Value("\${auth.jwt.secret}") private val secret: String) 
             .compact()
     }
 
-    override fun extractMemberId(token: String): Long =
-        Jwts.parser()
-            .setSigningKey(Base64.getEncoder().encodeToString(secret.toByteArray()))
-            .parseClaimsJws(token)
-            .body[ID].toString().toLong()
+    override fun extractMemberId(token: String): Long {
+        try {
+            return Jwts.parser()
+                .setSigningKey(Base64.getEncoder().encodeToString(secret.toByteArray()))
+                .parseClaimsJws(token)
+                .body[ID].toString().toLong()
+        } catch (e: Exception) {
+            log.error("fail extract memberId. message=${e.message}", e)
+            throw TokenException()
+        }
+    }
+
+    companion object {
+        private val log = LoggerFactory.getLogger(this::class.java)
+    }
 }
