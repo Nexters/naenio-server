@@ -11,4 +11,6 @@ data class PostCommentCount(
     fun withId(id: Long) = PostCommentCount(id, postId, commentCount)
 
     fun increaseCommentCount() = PostCommentCount(id, postId, commentCount + 1)
+    fun decreaseCommentCount() = PostCommentCount(id, postId, commentCount - 1)
+
 }

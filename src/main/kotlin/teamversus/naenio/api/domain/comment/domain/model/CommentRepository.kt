@@ -25,4 +25,6 @@ interface CommentRepository : ReactiveCrudRepository<Comment, Long> {
         parentType: CommentParent,
         pageable: Pageable,
     ): Flux<Comment>
+
+    fun findByIdAndMemberId(id: Long, memberId: Long): Mono<Comment>
 }

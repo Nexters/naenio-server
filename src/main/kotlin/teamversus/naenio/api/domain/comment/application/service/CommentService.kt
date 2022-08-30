@@ -7,6 +7,7 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.comment.application.CommentCreateUseCase
 import teamversus.naenio.api.domain.comment.application.CommentDeleteUseCase
 import teamversus.naenio.api.domain.comment.domain.event.CommentCreatedEvent
+import teamversus.naenio.api.domain.comment.domain.event.CommentDeletedEvent
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
@@ -57,8 +58,22 @@ class CommentService(
 
     @Transactional
     override fun delete(id: Long, memberId: Long): Mono<Void> =
-        Mono.just(id)
-            .filterWhen { commentRepository.existsByIdAndMemberId(it, memberId) }
+        commentRepository.findByIdAndMemberId(id, memberId)
             .switchIfEmpty { Mono.error(IllegalArgumentException("이미 삭제된 댓글입니다.")) }
-            .flatMap { commentRepository.deleteById(id) }
+            .flatMap { comment ->
+                commentRepository.deleteById(id)
+                    .doOnSuccess {
+                        commentQueryEventHandler.handle(
+                            CommentDeletedEvent(
+                                comment.id,
+                                comment.memberId,
+                                comment.parentId,
+                                comment.parentType,
+                                comment.content,
+                                comment.createdDateTime,
+                                comment.lastModifiedDateTime
+                            )
+                        )
+                    }
+            }
 }
