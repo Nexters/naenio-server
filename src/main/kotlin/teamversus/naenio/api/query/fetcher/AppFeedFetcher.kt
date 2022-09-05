@@ -67,7 +67,7 @@ class AppFeedFetcher(
                             ),
                             post.title,
                             post.content,
-                            it.t1,
+                            it.t1.sortedBy { choice -> choice.sequence },
                             it.t3.commentCount.toLong()
                         )
                     }
