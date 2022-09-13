@@ -101,8 +101,10 @@ class AppFeedFetcher(
                 )
                     .map { it.postId }
                     .collectList()
-                    .flatMap {
-                        postRepository.findAllById(it).collectList()
+                    .flatMap { ids ->
+                        postRepository.findAllById(ids)
+                            .collectMap { post -> post.id }
+                            .map { posts -> ids.map { posts[it] } }
                     }
                     .flatMapIterable { it }
             }
@@ -117,8 +119,10 @@ class AppFeedFetcher(
                     )
                         .map { it.postId }
                         .collectList()
-                        .flatMap {
-                            postRepository.findAllById(it).collectList()
+                        .flatMap { ids ->
+                            postRepository.findAllById(ids)
+                                .collectMap { post -> post.id }
+                                .map { posts -> ids.map { posts[it] } }
                         }
                 }.flatMapIterable { it }
         }
