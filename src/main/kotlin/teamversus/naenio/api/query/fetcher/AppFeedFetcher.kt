@@ -104,7 +104,7 @@ class AppFeedFetcher(
                     .flatMap { ids ->
                         postRepository.findAllById(ids)
                             .collectMap { post -> post.id }
-                            .map { posts -> ids.map { posts[it] } }
+                            .map { posts -> ids.mapNotNull { posts[it] } }
                     }
                     .flatMapIterable { it }
             }
@@ -122,7 +122,7 @@ class AppFeedFetcher(
                         .flatMap { ids ->
                             postRepository.findAllById(ids)
                                 .collectMap { post -> post.id }
-                                .map { posts -> ids.map { posts[it] } }
+                                .map { posts -> ids.mapNotNull { posts[it] } }
                         }
                 }.flatMapIterable { it }
         }
