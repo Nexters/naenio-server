@@ -19,7 +19,6 @@ import teamversus.naenio.api.query.result.AppPostsQueryResult
 import teamversus.naenio.api.support.okWithBody
 import teamversus.naenio.api.support.pathVariableId
 import java.time.LocalDate
-import kotlin.random.Random
 
 @Component
 class AppPostFetcher(
@@ -98,12 +97,7 @@ class AppPostFetcher(
 
 
     fun findDetailByRandom(request: ServerRequest): Mono<ServerResponse> =
-        postRepository.count()
-            .flatMap { postRepository.findById(Random.nextLong(65, it + 65)) }
-            .repeatWhenEmpty(10) {
-                postRepository.count()
-                    .flatMap { postRepository.findById(Random.nextLong(65, it + 65)) }
-            }
+        postRepository.findByRandom()
             .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
 
