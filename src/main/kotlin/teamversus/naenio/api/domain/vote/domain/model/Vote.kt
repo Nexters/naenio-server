@@ -11,15 +11,16 @@ data class Vote(
     val memberId: Long,
     val postId: Long,
     val choiceId: Long,
+    val postAuthorId: Long,
     @CreatedDate
     var createdDateTime: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN,
 ) {
-    fun withId(id: Long): Vote = Vote(id, memberId, postId, choiceId)
+    fun withId(id: Long): Vote = Vote(id, memberId, postId, choiceId, postAuthorId)
 
     fun changeChoice(choiceId: Long, memberId: Long): Vote {
         require(this.choiceId != choiceId) { "같은 선택지에 투표할 수 없습니다." }
-        return Vote(id, memberId, postId, choiceId, createdDateTime, lastModifiedDateTime)
+        return Vote(id, memberId, postId, choiceId, postAuthorId, createdDateTime, lastModifiedDateTime)
     }
 }

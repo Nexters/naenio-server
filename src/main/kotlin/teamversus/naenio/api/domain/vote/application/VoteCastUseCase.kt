@@ -11,8 +11,8 @@ interface VoteCastUseCase {
         val postId: Long,
         val choiceId: Long,
     ) {
-        fun toDomain(memberId: Long): Vote =
-            Vote(0, memberId, postId, choiceId)
+        fun toDomain(memberId: Long, postAuthorId: Long): Vote =
+            Vote(0, memberId, postId, choiceId, postAuthorId)
     }
 
     data class Result(

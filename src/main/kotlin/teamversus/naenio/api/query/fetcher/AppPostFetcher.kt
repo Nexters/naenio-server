@@ -6,6 +6,8 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+import reactor.kotlin.core.publisher.toFlux
+import teamversus.naenio.api.domain.block.domain.model.BlockRepository
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
@@ -30,6 +32,7 @@ class AppPostFetcher(
     private val postVoteCountRepository: PostVoteCountRepository,
     private val postChoiceVoteCountRepository: PostChoiceVoteCountRepository,
     private val postCommentCountRepository: PostCommentCountRepository,
+    private val blockRepository: BlockRepository,
 ) {
     fun findAllByTheme(request: ServerRequest): Mono<ServerResponse> {
         val theme = request.queryParam("theme")
@@ -43,7 +46,11 @@ class AppPostFetcher(
                         LocalDate.now().minusDays(1L), Pageable.ofSize(10)
                     )
                 )
-                .flatMap { postRepository.findById(it.postId) }
+                .flatMap { postVoteByDay ->
+                    blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                        .toFlux()
+                        .flatMap { postRepository.findByIdAndMemberIdNotIn(postVoteByDay.postId, it) }
+                }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
                 .map { AppPostsQueryResult(it) }
@@ -51,7 +58,11 @@ class AppPostFetcher(
         }
         if (theme == Theme.HALL_OF_FAME) {
             return postVoteCountRepository.findAllByOrderByCountDesc(Pageable.ofSize(10))
-                .flatMap { postRepository.findById(it.postId) }
+                .flatMap { postVoteCount ->
+                    blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                        .toFlux()
+                        .flatMap { postRepository.findByIdAndMemberIdNotIn(postVoteCount.postId, it) }
+                }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
                 .map { AppPostsQueryResult(it) }
@@ -62,7 +73,11 @@ class AppPostFetcher(
                 10,
                 Pageable.ofSize(10)
             )
-                .flatMap { postRepository.findById(it.postId) }
+                .flatMap { postChoiceVoteCount ->
+                    blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                        .toFlux()
+                        .flatMap { postRepository.findByIdAndMemberIdNotIn(postChoiceVoteCount.postId, it) }
+                }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
                 .map { AppPostsQueryResult(it) }
@@ -73,7 +88,11 @@ class AppPostFetcher(
                 10,
                 Pageable.ofSize(10)
             )
-                .flatMap { postRepository.findById(it.postId) }
+                .flatMap { postChoiceVoteCount ->
+                    blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                        .toFlux()
+                        .flatMap { postRepository.findByIdAndMemberIdNotIn(postChoiceVoteCount.postId, it) }
+                }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
                 .map { AppPostsQueryResult(it) }
@@ -81,7 +100,11 @@ class AppPostFetcher(
         }
         if (theme == Theme.NOISY) {
             return postCommentCountRepository.findAllByOrderByCommentCountDesc(Pageable.ofSize(10))
-                .flatMap { postRepository.findById(it.postId) }
+                .flatMap { postCommentCount ->
+                    blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                        .toFlux()
+                        .flatMap { postRepository.findByIdAndMemberIdNotIn(postCommentCount.postId, it) }
+                }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
                 .map { AppPostsQueryResult(it) }
@@ -91,13 +114,18 @@ class AppPostFetcher(
     }
 
     fun findDetailById(request: ServerRequest): Mono<ServerResponse> =
-        postRepository.findById(request.pathVariableId())
+        blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+            .flatMap { postRepository.findByIdAndMemberIdNotIn(request.pathVariableId(), it) }
+            .switchIfEmpty { Mono.error(IllegalArgumentException("삭제되었거나 차단된 게시물입니다.")) }
             .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
 
 
     fun findDetailByRandom(request: ServerRequest): Mono<ServerResponse> =
-        postRepository.findByRandom()
+        blockRepository.findAllByMemberId(request.memberId())
+            .map { it.targetMemberId }
+            .collectList()
+            .flatMap { postRepository.findByRandomAndMemberIdNotIn(it) }
             .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
 

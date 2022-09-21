@@ -10,10 +10,22 @@ interface CommentRepository : ReactiveCrudRepository<Comment, Long> {
     fun existsByIdAndParentType(id: Long, parentType: CommentParent): Mono<Boolean>
     fun existsByIdAndMemberId(id: Long, memberId: Long): Mono<Boolean>
 
-    fun countByParentIdAndParentType(parentId: Long, parentType: CommentParent): Mono<Long>
+    fun countByParentIdAndParentTypeAndMemberIdNotIn(
+        parentId: Long,
+        parentType: CommentParent,
+        excludeMemberIds: List<Long>,
+    ): Mono<Long>
 
     fun findAllByIdLessThanAndParentIdAndParentTypeOrderByIdDesc(
         id: Long,
+        parentId: Long,
+        parentType: CommentParent,
+        pageable: Pageable,
+    ): Flux<Comment>
+
+    fun findAllByIdLessThanAndMemberIdNotInAndParentIdAndParentTypeOrderByIdDesc(
+        id: Long,
+        excludeMemberIds: List<Long>,
         parentId: Long,
         parentType: CommentParent,
         pageable: Pageable,

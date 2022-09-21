@@ -5,6 +5,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+import teamversus.naenio.api.domain.block.domain.model.BlockRepository
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.commentlike.domain.model.CommentLikeRepository
@@ -26,17 +27,24 @@ class AppCommentFetcher(
     private val commentRepository: CommentRepository,
     private val memberRepository: MemberRepository,
     private val commentLikeRepository: CommentLikeRepository,
+    private val blockRepository: BlockRepository,
 ) {
     fun findPostComments(request: ServerRequest): Mono<ServerResponse> =
         Mono.just(request.pathVariableId())
             .filterWhen { postRepository.existsById(it) }
             .switchIfEmpty(Mono.error(IllegalArgumentException("삭제된 게시글 입니다.")))
+            .flatMap { blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList() }
             .flatMap {
                 Mono.zip(
-                    commentRepository.countByParentIdAndParentType(it, CommentParent.POST),
-                    commentRepository.findAllByIdLessThanAndParentIdAndParentTypeOrderByIdDesc(
+                    commentRepository.countByParentIdAndParentTypeAndMemberIdNotIn(
+                        request.pathVariableId(),
+                        CommentParent.POST,
+                        it
+                    ),
+                    commentRepository.findAllByIdLessThanAndMemberIdNotInAndParentIdAndParentTypeOrderByIdDesc(
                         request.lastCommentIdInQueryParam(),
                         it,
+                        request.pathVariableId(),
                         CommentParent.POST,
                         request.pageableOfSizeInQueryParam()
                     )
@@ -46,7 +54,11 @@ class AppCommentFetcher(
                                     .switchIfEmpty { Mono.just(Member.withdrawMember()) },
                                 commentLikeRepository.countByCommentId(comment.id),
                                 commentLikeRepository.existsByMemberIdAndCommentId(request.memberId(), comment.id),
-                                commentRepository.countByParentIdAndParentType(comment.id, CommentParent.COMMENT)
+                                commentRepository.countByParentIdAndParentTypeAndMemberIdNotIn(
+                                    comment.id,
+                                    CommentParent.COMMENT,
+                                    it
+                                )
                             )
                                 .map { tuple ->
                                     AppPostCommentsQueryResult.AppPostComment(
@@ -74,10 +86,12 @@ class AppCommentFetcher(
         Mono.just(request.pathVariableId())
             .filterWhen { commentRepository.existsById(it) }
             .switchIfEmpty(Mono.error(IllegalArgumentException("삭제된 댓글 입니다.")))
+            .flatMap { blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList() }
             .flatMap {
-                commentRepository.findAllByIdLessThanAndParentIdAndParentTypeOrderByIdDesc(
+                commentRepository.findAllByIdLessThanAndMemberIdNotInAndParentIdAndParentTypeOrderByIdDesc(
                     request.lastCommentIdInQueryParam(),
                     it,
+                    request.pathVariableId(),
                     CommentParent.COMMENT,
                     request.pageableOfSizeInQueryParam()
                 )
@@ -117,7 +131,8 @@ class AppCommentFetcher(
             request.pageableOfSizeInQueryParam()
         )
             .flatMap { comment ->
-                postRepository.findById(comment.parentId)
+                blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                    .flatMap { postRepository.findByIdAndMemberIdNotIn(comment.parentId, it) }
                     .flatMap { post ->
                         memberRepository.findById(post.memberId)
                             .switchIfEmpty { Mono.just(Member.withdrawMember()) }

@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS vote
     member_id               BIGINT   NOT NULL,
     post_id                 BIGINT   NOT NULL,
     choice_id               BIGINT   NOT NULL,
+    post_author_id          BIGINT   NOT NULL,
     created_date_time       DATETIME NOT NULL,
     last_modified_date_time DATETIME NOT NULL,
     PRIMARY KEY (id)
@@ -111,5 +112,13 @@ CREATE TABLE IF NOT EXISTS notice
     id      BIGINT       NOT NULL AUTO_INCREMENT,
     title   VARCHAR(255) NOT NULL,
     content VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS block
+(
+    id               BIGINT NOT NULL AUTO_INCREMENT,
+    member_id        BIGINT NOT NULL,
+    target_member_id BIGINT NOT NULL,
     PRIMARY KEY (id)
 );

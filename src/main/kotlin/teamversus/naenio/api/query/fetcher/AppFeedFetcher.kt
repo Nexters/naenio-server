@@ -6,6 +6,8 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+import reactor.kotlin.core.publisher.toFlux
+import teamversus.naenio.api.domain.block.domain.model.BlockRepository
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
 import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
@@ -30,6 +32,7 @@ class AppFeedFetcher(
     private val memberRepository: MemberRepository,
     private val voteRepository: VoteRepository,
     private val postCommentCountRepository: PostCommentCountRepository,
+    private val blockRepository: BlockRepository,
 ) {
     fun findFeed(request: ServerRequest): Mono<ServerResponse> =
         findPosts(request)
@@ -80,10 +83,15 @@ class AppFeedFetcher(
         val sortType = request.queryParam("sortType")
 
         if (sortType.isEmpty) {
-            return postRepository.findAllByIdLessThanOrderByIdDesc(
-                request.lastPostIdInQueryParam(),
-                request.pageableOfSizeInQueryParam()
-            )
+            return blockRepository.findAllByMemberId(request.memberId()).map { it.targetMemberId }.collectList()
+                .toFlux()
+                .flatMap {
+                    postRepository.findAllByIdLessThanAndMemberIdNotInOrderByIdDesc(
+                        request.lastPostIdInQueryParam(),
+                        it,
+                        request.pageableOfSizeInQueryParam()
+                    )
+                }
         }
         if (sortType.get() == SortType.MY_POST.name) {
             return postRepository.findAllByMemberIdAndIdLessThanOrderByIdDesc(

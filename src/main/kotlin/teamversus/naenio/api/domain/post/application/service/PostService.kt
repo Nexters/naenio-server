@@ -53,9 +53,9 @@ class PostService(
         Mono.just(id)
             .filterWhen { postRepository.existsByIdAndMemberId(it, memberId) }
             .switchIfEmpty { Mono.error(IllegalArgumentException("이미 삭제된 게시글 입니다.")) }
-            .flatMap { 
+            .flatMap {
                 choiceDeleteUseCase.deleteAllByPostId(id)
-                postRepository.deleteById(id)
-             }
-            
+                    .flatMap { postRepository.deleteById(id) }
+            }
+
 }

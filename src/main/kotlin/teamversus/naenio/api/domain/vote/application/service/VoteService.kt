@@ -3,6 +3,7 @@ package teamversus.naenio.api.domain.vote.application.service
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
+import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.domain.vote.application.VoteCastUseCase
 import teamversus.naenio.api.domain.vote.domain.event.VoteChangedEvent
 import teamversus.naenio.api.domain.vote.domain.event.VoteCreatedEvent
@@ -13,6 +14,7 @@ import teamversus.naenio.api.query.handler.VoteQueryEventHandler
 class VoteService(
     private val voteRepository: VoteRepository,
     private val voteQueryEventHandler: VoteQueryEventHandler,
+    private val postRepository: PostRepository,
 ) : VoteCastUseCase {
     override fun cast(command: VoteCastUseCase.Command, memberId: Long): Mono<VoteCastUseCase.Result> =
         voteRepository.findByPostIdAndMemberId(command.postId, memberId)
@@ -32,7 +34,9 @@ class VoteService(
                     }
             }
             .switchIfEmpty {
-                Mono.just(command.toDomain(memberId))
+                postRepository.findById(command.postId)
+                    .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 게시글입니다.")) }
+                    .map { command.toDomain(memberId, it.memberId) }
                     .flatMap {
                         voteRepository.save(it)
                             .doOnSuccess { vote ->

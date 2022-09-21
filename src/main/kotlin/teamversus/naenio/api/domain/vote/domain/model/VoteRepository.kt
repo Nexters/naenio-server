@@ -21,4 +21,6 @@ interface VoteRepository : ReactiveCrudRepository<Vote, Long> {
     ): Flux<Vote>
 
     fun findAllByLastModifiedDateTimeBetween(from: LocalDateTime, to: LocalDateTime): Flux<Vote>
+
+    fun deleteAllByMemberIdAndPostAuthorId(memberId: Long, postAuthorId: Long): Mono<Void>
 }
