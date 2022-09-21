@@ -125,7 +125,12 @@ class AppPostFetcher(
         blockRepository.findAllByMemberId(request.memberId())
             .map { it.targetMemberId }
             .collectList()
-            .flatMap { postRepository.findByRandomAndMemberIdNotIn(it) }
+            .flatMap {
+                if (it.isEmpty())
+                    postRepository.findByRandom()
+                else
+                    postRepository.findByRandomAndMemberIdNotIn(it)
+            }
             .flatMap { fetchWith(it, request.memberId()) }
             .flatMap { okWithBody(it) }
 
