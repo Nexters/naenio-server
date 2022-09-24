@@ -107,7 +107,7 @@ class AppPostFetcher(
                 }
                 .flatMap { fetchWith(it, request.memberId()) }
                 .collectList()
-                .map { AppPostsQueryResult(it) }
+                .map { AppPostsQueryResult(it.sortedByDescending { result -> result.commentCount }) }
                 .flatMap { okWithBody(it) }
         }
         throw IllegalArgumentException("요청과 일치하는 테마가 존재하지 않습니다.")
