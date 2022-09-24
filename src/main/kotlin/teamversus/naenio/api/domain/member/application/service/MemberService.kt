@@ -77,8 +77,10 @@ class MemberService(
 
     @Transactional
     override fun withdraw(id: Long): Mono<Void> =
-        Mono.just(id)
-            .filterWhen { memberRepository.existsById(it) }
+        memberRepository.findById(id)
             .switchIfEmpty { Mono.error(IllegalArgumentException("존재하지 않는 회원 입니다.")) }
-            .flatMap { memberRepository.deleteById(id) }
+            .flatMap {
+                memberRepository.save(it.withdraw())
+                    .flatMap { Mono.empty() }
+            }
 }

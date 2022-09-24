@@ -12,12 +12,13 @@ data class Member(
     val authServiceType: AuthServiceType,
     var nickname: String?,
     var profileImageIndex: Int?,
+    var withdraw: Boolean,
     @CreatedDate
     var createdDateTime: LocalDateTime = LocalDateTime.MIN,
     @LastModifiedDate
     var lastModifiedDateTime: LocalDateTime = LocalDateTime.MIN,
 ) {
-    fun withId(id: Long): Member = Member(id, authId, authServiceType, nickname, profileImageIndex)
+    fun withId(id: Long): Member = Member(id, authId, authServiceType, nickname, profileImageIndex, withdraw)
 
     fun changeNickname(nickname: String): Member {
         this.nickname = nickname
@@ -29,7 +30,10 @@ data class Member(
         return this
     }
 
-    companion object {
-        fun withdrawMember() = Member(0, "withdraw", AuthServiceType.UNKNOWN, null, null)
+    fun withdraw(): Member {
+        this.withdraw = true
+        this.nickname = null
+        this.profileImageIndex = null
+        return this
     }
 }

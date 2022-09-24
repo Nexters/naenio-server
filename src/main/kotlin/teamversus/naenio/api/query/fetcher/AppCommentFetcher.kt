@@ -4,12 +4,10 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.switchIfEmpty
 import teamversus.naenio.api.domain.block.domain.model.BlockRepository
 import teamversus.naenio.api.domain.comment.domain.model.CommentParent
 import teamversus.naenio.api.domain.comment.domain.model.CommentRepository
 import teamversus.naenio.api.domain.commentlike.domain.model.CommentLikeRepository
-import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
 import teamversus.naenio.api.filter.memberId
@@ -50,8 +48,7 @@ class AppCommentFetcher(
                     )
                         .flatMap { comment ->
                             Mono.zip(
-                                memberRepository.findById(comment.memberId)
-                                    .switchIfEmpty { Mono.just(Member.withdrawMember()) },
+                                memberRepository.findById(comment.memberId),
                                 commentLikeRepository.countByCommentId(comment.id),
                                 commentLikeRepository.existsByMemberIdAndCommentId(request.memberId(), comment.id),
                                 commentRepository.countByParentIdAndParentTypeAndMemberIdNotIn(
@@ -97,8 +94,7 @@ class AppCommentFetcher(
                 )
                     .flatMap { comment ->
                         Mono.zip(
-                            memberRepository.findById(comment.memberId)
-                                .switchIfEmpty { Mono.just(Member.withdrawMember()) },
+                            memberRepository.findById(comment.memberId),
                             commentLikeRepository.countByCommentId(comment.id),
                             commentLikeRepository.existsByMemberIdAndCommentId(request.memberId(), comment.id),
                         )
@@ -135,7 +131,6 @@ class AppCommentFetcher(
                     .flatMap { postRepository.findByIdAndMemberIdNotIn(comment.parentId, it) }
                     .flatMap { post ->
                         memberRepository.findById(post.memberId)
-                            .switchIfEmpty { Mono.just(Member.withdrawMember()) }
                             .map { author ->
                                 AppPostCommentsOfMeQueryResult.AppPostCommentsOfMe(
                                     comment.id,

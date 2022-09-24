@@ -9,7 +9,6 @@ import reactor.kotlin.core.publisher.switchIfEmpty
 import reactor.kotlin.core.publisher.toFlux
 import teamversus.naenio.api.domain.block.domain.model.BlockRepository
 import teamversus.naenio.api.domain.choice.domain.model.ChoiceRepository
-import teamversus.naenio.api.domain.member.domain.model.Member
 import teamversus.naenio.api.domain.member.domain.model.MemberRepository
 import teamversus.naenio.api.domain.post.domain.model.Post
 import teamversus.naenio.api.domain.post.domain.model.PostRepository
@@ -153,8 +152,7 @@ class AppPostFetcher(
                         }
                 }
                 .collectList(),
-            memberRepository.findById(post.memberId)
-                .switchIfEmpty { Mono.just(Member.withdrawMember()) },
+            memberRepository.findById(post.memberId),
             postCommentCountRepository.findByPostId(post.id)
                 .switchIfEmpty(Mono.just(PostCommentCount(0, post.id, 0))),
         )

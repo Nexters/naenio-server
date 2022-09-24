@@ -11,7 +11,13 @@ interface ExternalMemberLoadPort {
 
     data class Response(val authId: String, val authServiceType: AuthServiceType) {
         fun toDomain(): Member =
-            Member(authId = authId, authServiceType = authServiceType, nickname = null, profileImageIndex = null)
+            Member(
+                authId = authId,
+                authServiceType = authServiceType,
+                nickname = null,
+                profileImageIndex = null,
+                withdraw = false
+            )
     }
 }
 
