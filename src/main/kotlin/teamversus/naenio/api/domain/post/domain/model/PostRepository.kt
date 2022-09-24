@@ -16,7 +16,7 @@ interface PostRepository : ReactiveCrudRepository<Post, Long> {
     fun findAllByMemberIdAndIdLessThanOrderByIdDesc(memberId: Long, id: Long, pageable: Pageable): Flux<Post>
     fun existsByIdAndMemberId(id: Long, memberId: Long): Mono<Boolean>
 
-    @Query(value = "SELECT * FROM post WHERE member_id NOT IN (:memberIds)")
+    @Query(value = "SELECT * FROM post WHERE member_id NOT IN (:memberIds) ORDER BY RAND() LIMIT 1")
     fun findByRandomAndMemberIdNotIn(memberIds: List<Long>): Mono<Post>
 
     @Query(value = "SELECT * FROM post ORDER BY RAND() LIMIT 1")
